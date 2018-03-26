@@ -1,0 +1,62 @@
+{% extends 'layout.html.twig' %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-sm-6">
+            <h1>TAVOLE ROTONDE</h1>
+        </div>
+        <div class="col-sm-3 pull-right">
+            <a class="btn btn-lg btn-primary pull-right" role="button" href="{{ path_for('meetup.create') }}"><i class="glyphicon-plus"></i> Crea nuovo</a>
+        </div>
+    </div>
+
+    <span class="help-block"></span>
+
+    {% include 'blocks/forms/formEventSelect.html.twig' %}
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Titlolo meetup</th>
+                <th>Data meetup</th>
+                <th>Creato</th>
+                <th>Partecipanti</th>
+                <th>Posti Tot</th>
+                <th>Disponibili</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        {% if meetups is defined and meetups is empty %}
+            <tr>
+                <td colspan="5"><p class="text-warning">Non ci sono meetup programmati per questo evento.</p></td>
+            </tr>
+        {% endif %}
+
+        {% for meetup in meetups %}
+            <tr>
+                <td>{{ meetup.title }}</td>
+                <td>{{ meetup.date|date('d/m/Y') }}</td>
+                <td>{{ event.created_at|date('d/m/Y') }}</td>
+                <td><span class="badge">15</span></td>
+                <td><span class="badge">20</span></td>
+                <td><span class="badge alert-danger">5</span></td>
+                <td class="col-xs-2">
+                    <div class="btn-group pull-right">
+                        <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            Actions
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ path_for('meetup.update', {'id' : meetup.id }) }}">Edita Meetup</a></li>
+                            <li><a href="#" data-href="#" data-toggle="modal" data-target="#confirm-delete">Delete</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

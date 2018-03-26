@@ -1,0 +1,75 @@
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h2>Sign Up</h2></div>
+            <div class="panel-body">
+                <!-- {{ errors | json_encode }} -->
+                <form action="{{ path_for('auth.signup') }}" method="post" autocomplete="off">
+
+                    <!--/   EMAIL   \-->
+                    <div class="{{ errors.email ? 'has-error' : '' }}">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+                            <input type="text" class="form-control" name="email" id="email" placeholder="your@e-mail.address" value="{{ old.email }}">
+                        </div>
+                        {% if errors.email %}
+                        <span class="help-block">{{ errors.email | first }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="help-block"></span>
+
+                    <!--/   NAME   \-->
+                    <div class="{{ errors.myText ? 'has-error' : '' }}">
+                        {{ myText | raw }}
+                        {% if errors.myText %}
+                            <span class="help-block">{{ errors.myText | first }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="help-block"></span>
+
+                    <!--/   USERNAME   \-->
+                    <div class="{{ errors.username ? 'has-error' : '' }}">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                            <input type="text" class="form-control" name="username" id="user" placeholder="Choose a username" value="{{ old.username }}">
+                        </div>
+                        {% if errors.username %}
+                        <span class="help-block">{{ errors.username | first }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="help-block"></span>
+
+                    <!--/   PASSWORD   \-->
+                    <div class="{{ errors.password ? 'has-error' : '' }}">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-lock fa-lg"></i></span>
+                            <input type="password" class="form-control" name="password" id="password" placeholder="Choose a Password"  value="{{ old.password }}">
+                        </div>
+                        {% if errors.password %}
+                        <span class="help-block">{{ errors.password | first }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="help-block"></span>
+
+                    <!--/   PASSWORD CONFIRM   \-->
+                    <div class="{{ errors.passwordConfirm ? 'has-error' : '' }}">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-lock fa-lg"></i></span>
+                            <input type="password" class="form-control" name="passwordConfirm" id="passwordConfirm" placeholder="Repeat Password">
+                        </div>
+                        {% if errors.passwordConfirm %}
+                            {% set passwordConfirm = errors.passwordConfirm | first %}
+                            <span class="help-block">{{ (passwordConfirm matches '/equals/') ? '"Repeat Password" does not match "Password"' : passwordConfirm }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="help-block"></span>
+
+                    <!--/   SUBMIT   \-->
+                    <input type="submit" value="Create your account" class="btn btn-lg btn-primary btn-block"/>
+
+                    {{ csrf.field | raw }}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

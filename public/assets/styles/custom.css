@@ -1,0 +1,16 @@
+body {
+    padding-top: 80px;
+}
+
+.form-info {
+    padding-top:15px;
+    font-size:85%;
+}
+
+.right {
+    text-align: right;
+}
+
+.float-right {
+    float:right;
+}

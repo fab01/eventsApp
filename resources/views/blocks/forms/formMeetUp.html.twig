@@ -1,0 +1,63 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h2>{{ form_title }}</h2></div>
+            <div class="panel-body">
+                <form action="{{ path_for(form_action, {'id' : id}) }}" method="post" autocomplete="off">
+
+                    <!--/   TITLE   \-->
+                    <div class="{{ errors.title ? 'has-error' : '' }}">
+                        {{ form.title | raw }}
+                        {% if errors.title %}
+                            <span class="help-block">{{ errors.title | first }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="help-block"></span>
+
+                    <!--/   DATE   \-->
+                    <div class="{{ errors.date ? 'has-error' : '' }}">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-calendar fa-lg"></i></span>
+                            {{ form.date | raw }}
+                        </div>
+                        {% if errors.date %}
+                            <span class="help-block">{{ errors.date | first }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="help-block"></span>
+
+
+                    <!--/   DESCRIPTION   \-->
+                    <div class="{{ errors.description ? 'has-error' : '' }}">
+                        {{ form.description | raw }}
+                        {% if errors.description %}
+                            <span class="help-block">{{ errors.description | first }}</span>
+                        {% endif %}
+                    </div>
+                    <script>
+                        CKEDITOR.replace( 'description' );
+                    </script>
+                    <span class="help-block"></span>
+
+
+                    <!--/   EVENTS   \-->
+                    <div class="{{ errors.events ? 'has-error' : '' }}">
+                        {{ form.events | raw }}
+                        {% if errors.events %}
+                            <span class="help-block">{{ errors.events | first }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="help-block"></span>
+
+                    <!--/   SUBMIT   \-->
+                    <input type="submit" value="{{ form_submit }}" class="btn btn-lg btn-primary"/>
+
+                    <!--/   ID (if Edit/Update)   \-->
+                    {{ form.id | raw }}
+
+                    {{ csrf.field | raw }}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

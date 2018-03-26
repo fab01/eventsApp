@@ -1,0 +1,19 @@
+<span class="help-block"></span>
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h4>Select Event</h4></div>
+    <div class="panel-body">
+
+        <form action="" method="post">
+            <div class="col-sm-10">
+                {{ events.events | raw }}
+                <span class="help-block">Filtra tavole rotonde per evento.</span>
+            </div>
+            <div class="col-sm-2">
+                <input type="submit" value="Submit" class="btn btn-primary"/>
+                {{ csrf.field | raw }}
+            </div>
+        </form>
+
+    </div>
+</div>

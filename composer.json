@@ -1,0 +1,16 @@
+{
+    "require": {
+        "slim/slim": "^3.0",
+        "slim/twig-view": "^2.3",
+        "illuminate/database": "^5.4",
+        "slim/csrf": "^0.8.1",
+        "slim/flash": "^0.2.0",
+        "form-manager/form-manager": "^5.1",
+        "respect/validation": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app"
+        }
+    }
+}

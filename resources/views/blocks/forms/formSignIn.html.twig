@@ -1,0 +1,54 @@
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2>Sign In</h2>
+                <div class="form-info right"><a href="#">Forgot password?</a></div>
+            </div>
+            <div class="panel-body">
+                <!-- {{ errors | json_encode }} -->
+                <form action="{{ path_for('auth.signin') }}" method="post" autocomplete="off">
+
+                    <!--/   USERNAME   \-->
+                    <div class="{{ errors.username ? 'has-error' : '' }}">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                            <input type="text" class="form-control" name="username" id="user" placeholder="Your username" value="{{ old.username }}">
+                        </div>
+                        {% if errors.username %}
+                            <span class="help-block">{{ errors.username | first }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="help-block"></span>
+
+                    <!--/   PASSWORD   \-->
+                    <div class="{{ errors.password ? 'has-error' : '' }}">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-lock fa-lg"></i></span>
+                            <input type="password" class="form-control" name="password" id="password" placeholder="Your Password"  value="{{ old.password }}">
+                        </div>
+                        {% if errors.password %}
+                            <span class="help-block">{{ errors.password | first }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="help-block"></span>
+
+                    <!--/   SUBMIT   \-->
+                    <button type="submit" class="btn btn-lg btn-primary btn-block"><i class="fa fa-sign-in" aria-hidden="true"></i> Login</button>
+
+                    {{ csrf.field | raw }}
+                    <div class="form-group">
+                        <div class="col-md-12 control">
+                            <div class="form-info" >
+                                Don't have an account!
+                                <a href="{{ path_for('auth.signup') }}" onClick="$('#loginbox').hide(); $('#signupbox').show()">
+                                    Sign Up Here
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

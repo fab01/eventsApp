@@ -1,0 +1,53 @@
+{% extends 'layout.html.twig' %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-sm-6">
+            <h1>EVENTI IIM</h1>
+        </div>
+        <div class="col-sm-3 pull-right">
+            <a class="btn btn-lg btn-primary pull-right" role="button" href="{{ path_for('event.create') }}"><i class="glyphicon-plus"></i> Crea nuovo</a>
+        </div>
+    </div>
+
+    <span class="help-block"></span>
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Titolo evento</th>
+            <th>Status</th>
+            <th>Data Creazione</th>
+            <th>Partecipanti evento</th>
+            <th>Meetup associati</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for event in events %}
+            <tr{{ (event.status == 1) ? ' class="success"' : '' }}>
+                <td>{{ event.title }}</td>
+                <td>{{ (event.status == 0) ? 'Disabilitato' : 'Attivo' }}</td>
+                <td>{{ event.created_at|date('d-m-Y') }}</td>
+                <td><span class="badge">{{ event.subscriptionCount }}</span></td>
+                <td><span class="badge">{{ event.meetupCount }}</span></td>
+                <td class="col-xs-2">
+                    <div class="btn-group pull-right">
+                        <a href="#" class="btn {{ (event.status == 1) ? 'btn-primary' : 'btn-info' }} dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            Actions
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ path_for('event.update', {'id' : event.id }) }}">Edita Evento</a></li>
+                            <li><a href="#">Dettagli evento</a></li>
+                            <li><a href="#" data-href="#" data-toggle="modal" data-target="#confirm-delete">Delete</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
