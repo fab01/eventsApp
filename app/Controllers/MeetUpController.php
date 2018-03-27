@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\MeetUp;
+use FormManager\Fields\Datetime;
 use Respect\Validation\Validator as v;
 
 class MeetUpController extends Controller
@@ -109,6 +110,7 @@ class MeetUpController extends Controller
           'date' => v::notEmpty()->date('d-m-Y'),
           'events' => v::notEmpty(),
         ];
+
         $toUpdate = [
           'title'  => $request->getParam('title'),
           'date' => date_format(date_create($request->getParam('date')), 'Y-m-d H:i:s'),

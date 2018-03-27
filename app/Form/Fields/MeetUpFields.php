@@ -73,7 +73,7 @@ class MeetUpFields extends Form
             'name' => 'date',
             'placeholder' => 'Data Meetup',
           ])
-          ->val(date_format(date_create($data->date),"d/m/Y"))
+          ->val(date_format(date_create($data->date),"d-m-Y"))
           ->addClass('js-datepicker')
           ->addClass('form-control');
 
