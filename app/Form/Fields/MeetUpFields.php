@@ -62,11 +62,8 @@ class MeetUpFields extends Form
             'name' => 'description',
             'id' => 'description',
           ])
-          ->val($this->getMessage('description'))
           ->addClass('form-control')
           ->label('Descrizione');
-
-
 
         $date = F::text()->attr(
           [
