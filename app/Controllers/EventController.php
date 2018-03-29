@@ -153,5 +153,24 @@ class EventController extends Controller
 
     //==== DELETE
 
+    /**
+     * @param $request
+     * @param $response
+     *
+     * @return mixed
+     *
+     * Update event. Get Form.
+     */
+    public function getEventDelete($request, $response, $args)
+    {
+        if (!Auth::isAdmin()) {
+            $this->flash->addMessage('error', "You don't have permission to delete an event!");
+            return $response->withRedirect($this->router->pathFor('event.all'));
+        }
+        else {
+            Event::find($args['id'])->delete();
+            $this->flash->addMessage('success', "Event deleted!");
+            return $response->withRedirect($this->router->pathFor('event.all'));
+        }
+    }
 }
-

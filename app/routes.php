@@ -44,9 +44,11 @@ $app->group('', function() use ($app, $container) {
         $app->post('/event/create', 'EventController:postEventCreate'); // CREATE EVENTS.
         $app->get('/event/update/{id}', 'EventController:getEventUpdate')->setName('event.update'); // UPDATE EVENTS.
         $app->post('/event/update/{id}', 'EventController:postEventUpdate'); // UPDATE EVENTS.
+        $app->get('/event/delete/{id}', 'EventController:getEventDelete')->setName('event.delete'); // DELETE EVENT.
 
         $app->get('/meetup/all', 'MeetUpController:getAll')->setName('meetup.all'); // LIST OF MEETUP.
         $app->post('/meetup/all', 'MeetUpController:postAll'); // LIST OF MEETUP BY POST EVENT ID.
+        $app->get('/meetup/all/{eid}', 'MeetUpController:getAllByEid')->setName('meetup.all.eid'); // LIST OF MEETUP FILTERED BY Event ID in GET.
         $app->get('/meetup/create', 'MeetUpController:getMeetUpCreate')->setName('meetup.create'); // CREATE MEETUP.
         $app->post('/meetup/create', 'MeetUpController:postMeetUpCreate'); // CREATE MEETUP.
         $app->get('/meetup/update/{id}', 'MeetUpController:getMeetUpUpdate')->setName('meetup.update'); // UPDATE MEETUP.

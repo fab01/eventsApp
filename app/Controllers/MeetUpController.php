@@ -15,6 +15,14 @@ class MeetUpController extends Controller
         return $this->view->render($response, 'controller/meetup/all.html.twig', ['events' => $events]);
     }
 
+    public function getAllByEid($request, $response, $args)
+    {
+        $meetups = MeetUp::where('event_id', $args['eid'])->orderBy('date')->get();
+        $events = $this->form->getFields('Event')->selectAll($args['eid']);
+
+        return $this->view->render($response, 'controller/meetup/all.html.twig', ['events' => $events, 'meetups' => $meetups]);
+    }
+
     /**
      * @param $request
      * @param $response
@@ -82,6 +90,7 @@ class MeetUpController extends Controller
     public function getMeetUpUpdate($request, $response, $args)
     {
         $form = $this->form->getFields('MeetUp')->updateSet($args['id']);
+        $meetup = MeetUp::find($args['id']);
 
         return $this->view->render($response, 'controller/meetup/manage.html.twig',
           [
@@ -89,6 +98,7 @@ class MeetUpController extends Controller
             'form_submit' => 'Save',
             'form_action' => 'meetup.update',
             'form' => $form,
+            'eventId' => $meetup->event_id,
             'id' => $args['id'],
           ]
         );
@@ -121,14 +131,14 @@ class MeetUpController extends Controller
         $validation = $this->validator->validate($request, $params);
 
         if ($validation->failed()) {
-            return $response->withRedirect($this->router->pathFor('meetup.update', ['id' => $request->getParam('id')]));
+            return $response->withRedirect($this->router->pathFor('meetup.update', ['id' => $request->getParam('id'), 'eventId' =>  $request->getParam('events')]));
         }
 
         MeetUp::where('id', $request->getParam('id'))->update($toUpdate);
 
         $this->flash->addMessage('success', "Meetup has been correctly updated!");
 
-        return $response->withRedirect($this->router->pathFor('meetup.all'));
+        return $response->withRedirect($this->router->pathFor('meetup.update', ['id' => $request->getParam('id'), 'eventId' =>  $request->getParam('events')]));
     }
 
     //==== DELETE
