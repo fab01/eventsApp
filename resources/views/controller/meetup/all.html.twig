@@ -39,9 +39,9 @@
                 <td>{{ meetup.title }}</td>
                 <td>{{ meetup.date|date('d/m/Y') }}</td>
                 <td>{{ event.created_at|date('d/m/Y') }}</td>
-                <td><span class="badge">15</span></td>
-                <td><span class="badge">20</span></td>
-                <td><span class="badge alert-danger">5</span></td>
+                <td><span class="badge">{{ participants }}</span></td>
+                <td><span class="badge">{{ meetup.available_places }}</span></td>
+                <td><span class="badge alert-danger">{{ "#{ meetup.available_places - participants }" }}</span></td>
                 <td class="col-xs-2">
                     <div class="btn-group pull-right">
                         <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
