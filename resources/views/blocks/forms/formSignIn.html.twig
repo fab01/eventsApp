@@ -3,7 +3,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h2>Sign In</h2>
-                <div class="form-info right"><a href="#">Forgot password?</a></div>
+                <div class="form-info right"><a href="/user/password">Forgot password?</a></div>
             </div>
             <div class="panel-body">
                 <!-- {{ errors | json_encode }} -->
@@ -41,7 +41,7 @@
                         <div class="col-md-12 control">
                             <div class="form-info" >
                                 Don't have an account!
-                                <a href="{{ path_for('auth.signup') }}" onClick="$('#loginbox').hide(); $('#signupbox').show()">
+                                <a href="/user/register" onClick="$('#loginbox').hide(); $('#signupbox').show()">
                                     Sign Up Here
                                 </a>
                             </div>

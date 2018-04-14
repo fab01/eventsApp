@@ -38,29 +38,29 @@ $app->group('', function() use ($app, $container) {
     $app->group('', function() use($app, $container) {
 
         $app->get('/user/all', 'UserController:getAll')->setName('user.all'); // LIST OF USERS.
-
         $app->get('/event/all', 'EventController:getAll')->setName('event.all'); // LIST OF EVENTS.
-        $app->get('/event/create', 'EventController:getEventCreate')->setName('event.create'); // CREATE EVENTS.
-        $app->post('/event/create', 'EventController:postEventCreate'); // CREATE EVENTS.
-        $app->get('/event/update/{id}', 'EventController:getEventUpdate')->setName('event.update'); // UPDATE EVENTS.
-        $app->post('/event/update/{id}', 'EventController:postEventUpdate'); // UPDATE EVENTS.
-        $app->get('/event/delete/{id}', 'EventController:getEventDelete')->setName('event.delete'); // DELETE EVENT.
-
         $app->get('/meetup/all', 'MeetUpController:getAll')->setName('meetup.all'); // LIST OF MEETUP.
         $app->post('/meetup/all', 'MeetUpController:postAll'); // LIST OF MEETUP BY POST EVENT ID.
         $app->get('/meetup/all/{eid}', 'MeetUpController:getAllByEid')->setName('meetup.all.eid'); // LIST OF MEETUP FILTERED BY Event ID in GET.
-        $app->get('/meetup/create', 'MeetUpController:getMeetUpCreate')->setName('meetup.create'); // CREATE MEETUP.
-        $app->post('/meetup/create', 'MeetUpController:postMeetUpCreate'); // CREATE MEETUP.
+
+        $app->get('/event/create', 'EventController:getEventCreate')->setName('event.create'); // CREATE EVENTS.
+        $app->get('/event/update/{id}', 'EventController:getEventUpdate')->setName('event.update'); // UPDATE EVENTS.
         $app->get('/meetup/update/{id}', 'MeetUpController:getMeetUpUpdate')->setName('meetup.update'); // UPDATE MEETUP.
-        $app->post('/meetup/update/{id}', 'MeetUpController:postMeetUpUpdate'); // UPDATE MEETUP.
 
         /**
          * Routes reserved to USER ADMINISTRATOR.
          */
         $app->group('', function() use($app, $container) {
 
+            $app->post('/event/create', 'EventController:postEventCreate'); // CREATE EVENTS.
+            $app->post('/event/update/{id}', 'EventController:postEventUpdate'); // UPDATE EVENTS.
+            $app->get('/event/delete/{id}', 'EventController:getEventDelete')->setName('event.delete'); // DELETE EVENT.
+            $app->get('/meetup/create', 'MeetUpController:getMeetUpCreate')->setName('meetup.create'); // CREATE MEETUP.
+            $app->post('/meetup/create', 'MeetUpController:postMeetUpCreate'); // CREATE MEETUP.
+            $app->post('/meetup/update/{id}', 'MeetUpController:postMeetUpUpdate'); // UPDATE MEETUP.
+
         })->add(new AdminMiddleware($container));
 
-    })->add(new RoleMiddleware($container, ['Moderator']));
+    })->add(new RoleMiddleware($container, ['moderator']));
 
 })->add(new AuthMiddleware($container));
