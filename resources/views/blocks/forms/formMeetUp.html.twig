@@ -1,9 +1,26 @@
 <div class="row">
+
+    {% if eventId is defined %}
+    <div class="col-md-12">
+        <a href="{{ path_for('meetup.all.eid', {'eid' : eventId}) }}" class="btn btn-md btn-info pull-right"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Back to the list</a>
+    </div>
+    {% endif %}
+
     <div class="col-md-12">
         <div class="panel panel-default">
-            <div class="panel-heading"><h2>{{ form_title }}</h2></div>
+            <div class="panel-heading">
+                <h2>{{ form_title }}</h2>
+            </div>
             <div class="panel-body">
                 <form action="{{ path_for(form_action, {'id' : id}) }}" method="post" autocomplete="off">
+                    <!--/   EVENTS   \-->
+                    <div class="{{ errors.events ? 'has-error' : '' }}">
+                        {{ form.events | raw }}
+                        {% if errors.events %}
+                            <span class="help-block">{{ errors.events | first }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="help-block"></span>
 
                     <!--/   TITLE   \-->
                     <div class="{{ errors.title ? 'has-error' : '' }}">
@@ -26,6 +43,14 @@
                     </div>
                     <span class="help-block"></span>
 
+                    <!--/   AVAILABLE PLACES   \-->
+                    <div class="{{ errors.places ? 'has-error' : '' }}">
+                        {{ form.places | raw }}
+                        {% if errors.places %}
+                            <span class="help-block">{{ errors.places | first }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="help-block"></span>
 
                     <!--/   DESCRIPTION   \-->
                     <div class="{{ errors.description ? 'has-error' : '' }}">
@@ -39,19 +64,8 @@
                     </script>
                     <span class="help-block"></span>
 
-
-                    <!--/   EVENTS   \-->
-                    <div class="{{ errors.events ? 'has-error' : '' }}">
-                        {{ form.events | raw }}
-                        {% if errors.events %}
-                            <span class="help-block">{{ errors.events | first }}</span>
-                        {% endif %}
-                    </div>
-                    <span class="help-block"></span>
-
                     <!--/   SUBMIT   \-->
                     <input type="submit" value="{{ form_submit }}" class="btn btn-lg btn-primary"/>
-
                     <!--/   ID (if Edit/Update)   \-->
                     {{ form.id | raw }}
 

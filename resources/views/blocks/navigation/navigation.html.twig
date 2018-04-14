@@ -15,7 +15,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
             <ul class="nav navbar-nav">
-                {% if has_role(['Editor']) %}
+                {% if has_role(['moderator']) %}
                     <li><a href="{{ path_for('event.all') }}">Eventi</a></li>
                     <li><a href="{{ path_for('meetup.all') }}">Tavole Rotonde</a></li>
                 {% endif %}
@@ -29,18 +29,18 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="{{ path_for('auth.password.change') }}">Change password</a></li>
+                            <!--<li><a href="{{ path_for('auth.password.change') }}">Change password</a></li>-->
                             <li><a href="{{ path_for('auth.signout') }}">Logout</a></li>
                         </ul>
                     </li>
 
                 {% else %}
-                    <li>
+                    <!--<li>
                         <a href="{{ path_for('auth.signin') }}">Login</a>
                     </li>
                     <li>
                         <a href="{{ path_for('auth.signup') }}">Sign Up</a>
-                    </li>
+                    </li>-->
                 {% endif %}
             </ul>
         </div><!-- /.navbar-collapse -->

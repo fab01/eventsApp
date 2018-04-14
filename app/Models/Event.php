@@ -32,6 +32,7 @@ class Event extends Model
         return $this->leftJoin('meetup', 'meetup.event_id', '=', 'event.id')
           ->leftJoin('event_subscription', 'event_subscription.event_id', '=', 'event.id')
           ->selectRaw('event.*, count(distinct event_subscription.id) as subscriptionCount, count(distinct meetup.id) as meetupCount')
+          ->where('meetup.deleted', 0)
           ->groupBy('event.id')
           ->get();
     }

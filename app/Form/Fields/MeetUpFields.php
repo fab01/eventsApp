@@ -17,6 +17,11 @@ class MeetUpFields extends Form
           ->addClass('form-control')
           ->label('Titolo della Tavola Rotonda');
 
+        $places = F::text()->attr('name', 'places')
+          ->val($this->getMessage('places'))
+          ->addClass('form-control')
+          ->label('Numero massimo di partecipanti');
+
         $description = F::textarea()->removeAttr('id')
           ->attr([
             'name' => 'description',
@@ -42,6 +47,7 @@ class MeetUpFields extends Form
           'description' => $description,
           'events' => $events,
           'date' => $date,
+          'places' => $places,
         ];
 
         return $fields;
@@ -55,6 +61,11 @@ class MeetUpFields extends Form
           ->val($data->title)
           ->addClass('form-control')
           ->label('Titolo della Tavola Rotonda');
+
+        $places = F::text()->attr('name', 'places')
+          ->val($data->available_places)
+          ->addClass('form-control')
+          ->label('Numero massimo di partecipanti');
 
         $description = F::textarea()->removeAttr('id')
           ->val($data->description)
@@ -86,6 +97,7 @@ class MeetUpFields extends Form
           'events' => $events,
           'date' => $date,
           'id' => $meetUpId,
+          'places' => $places,
         ];
 
         return $fields;

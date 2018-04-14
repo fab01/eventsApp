@@ -13,5 +13,6 @@ class MeetUp extends Model
       'description',
       'event_id',
       'date',
+      'available_places',
     ];
 }
