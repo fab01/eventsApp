@@ -1,0 +1,28 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h2>{{ form_title }}</h2></div>
+            <div class="panel-body">
+                <form action="{{ path_for(form_action, {'id' : id}) }}" method="post" autocomplete="off">
+
+                    <!--/   TITLE   \-->
+                    <div class="{{ errors.title ? 'has-error' : '' }}">
+                        {{ form.title | raw }}
+                        {% if errors.title %}
+                            <span class="help-block">{{ errors.title | first }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="help-block"></span>
+
+                    <!--/   SUBMIT   \-->
+                    <input type="submit" value="{{ form_submit }}" class="btn btn-lg btn-primary"/>
+
+                    <!--/   ID (if Edit/Update)   \-->
+                    {{ form.id | raw }}
+
+                    {{ csrf.field | raw }}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

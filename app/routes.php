@@ -42,10 +42,15 @@ $app->group('', function() use ($app, $container) {
         $app->get('/meetup/all', 'MeetUpController:getAll')->setName('meetup.all'); // LIST OF MEETUP.
         $app->post('/meetup/all', 'MeetUpController:postAll'); // LIST OF MEETUP BY POST EVENT ID.
         $app->get('/meetup/all/{eid}', 'MeetUpController:getAllByEid')->setName('meetup.all.eid'); // LIST OF MEETUP FILTERED BY Event ID in GET.
+        $app->get('/accommodation/all', 'AccommodationController:getAll')->setName('accommodation.all'); // LIST OF ACCOMMODATION.
 
         $app->get('/event/create', 'EventController:getEventCreate')->setName('event.create'); // CREATE EVENTS.
         $app->get('/event/update/{id}', 'EventController:getEventUpdate')->setName('event.update'); // UPDATE EVENTS.
         $app->get('/meetup/update/{id}', 'MeetUpController:getMeetUpUpdate')->setName('meetup.update'); // UPDATE MEETUP.
+        $app->get('/accommodation/create', 'AccommodationController:getAccommodationCreate')->setName('accommodation.create'); // CREATE ACCOMMODATION.
+        $app->post('/accommodation/create', 'AccommodationController:postAccommodationCreate'); // CREATE ACCOMMODATION.
+        $app->get('/accommodation/update/{id}', 'AccommodationController:getAccommodationUpdate')->setName('accommodation.update'); // UPDATE ACCOMMODATION.
+        $app->post('/accommodation/update/{id}', 'AccommodationController:postAccommodationUpdate'); // UPDATE ACCOMMODATION.
 
         /**
          * Routes reserved to USER ADMINISTRATOR.

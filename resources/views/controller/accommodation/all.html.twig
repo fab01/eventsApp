@@ -1,0 +1,43 @@
+{% extends 'layout.html.twig' %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-sm-6">
+            <h1>ALLOGGI OSPITI</h1>
+        </div>
+        <div class="col-sm-3 pull-right">
+            <a class="btn btn-lg btn-primary pull-right" role="button" href="{{ path_for('accommodation.create') }}"><i class="glyphicon-plus"></i> Crea nuovo</a>
+        </div>
+    </div>
+
+    <span class="help-block"></span>
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Denomiazione</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for accommodation in accommodations %}
+            <tr>
+                <td>{{ accommodation.title }}</td>
+                <td class="col-xs-2">
+                    <div class="btn-group pull-right">
+                        <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            Actions
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ path_for('accommodation.update', {'id' : accommodation.id }) }}">Edita Alloggio</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
