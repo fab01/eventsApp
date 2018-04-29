@@ -63,6 +63,7 @@ $app->group('', function() use ($app, $container) {
             $app->get('/meetup/create', 'MeetUpController:getMeetUpCreate')->setName('meetup.create'); // CREATE MEETUP.
             $app->post('/meetup/create', 'MeetUpController:postMeetUpCreate'); // CREATE MEETUP.
             $app->post('/meetup/update/{id}', 'MeetUpController:postMeetUpUpdate'); // UPDATE MEETUP.
+            $app->get('/meetup/delete/{id}', 'MeetUpController:getMeetUpDelete')->setName('meetup.delete'); // DELETE MEETUP.
 
         })->add(new AdminMiddleware($container));
 

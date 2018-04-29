@@ -33,7 +33,16 @@ class Event extends Model
           ->leftJoin('event_subscription', 'event_subscription.event_id', '=', 'event.id')
           ->selectRaw('event.*, count(distinct event_subscription.id) as subscriptionCount, count(distinct meetup.id) as meetupCount')
           ->where('meetup.deleted', 0)
+          ->where('event.deleted', 0)
           ->groupBy('event.id')
           ->get();
+    }
+
+    public function isActive($id) {
+        $status = $this->find($id);
+        if ($status->status == 1) {
+            return true;
+        }
+        return false;
     }
 }

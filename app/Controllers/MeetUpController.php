@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Auth\Auth;
+use App\Models\Event;
 use App\Models\MeetUp;
 use App\Models\MeetUpSubscription;
 use FormManager\Fields\Datetime;
@@ -167,4 +169,24 @@ class MeetUpController extends Controller
 
     //==== DELETE
 
+    /**
+     * @param $request
+     * @param $response
+     *
+     * @return mixed
+     *
+     * Update event. Get Form.
+     */
+    public function getMeetUpDelete($request, $response, $args)
+    {
+        if (!Auth::isAdmin()) {
+            $this->flash->addMessage('error', "You don't have permission to delete a Meetup!");
+            return $response->withRedirect($this->router->pathFor('meetup.all'));
+        }
+        else {
+            MeetUp::where('id', $args['id'])->update(['deleted' => '1']);
+            $this->flash->addMessage('success', "Meetup deleted!");
+            return $response->withRedirect($this->router->pathFor('meetup.all'));
+        }
+    }
 }

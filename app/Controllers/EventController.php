@@ -163,12 +163,17 @@ class EventController extends Controller
      */
     public function getEventDelete($request, $response, $args)
     {
+        $event = new Event();
         if (!Auth::isAdmin()) {
             $this->flash->addMessage('error', "You don't have permission to delete an event!");
             return $response->withRedirect($this->router->pathFor('event.all'));
         }
+        if ($event->isActive($args['id'])) {
+            $this->flash->addMessage('error', "You can't delete an event when is Active!");
+            return $response->withRedirect($this->router->pathFor('event.all'));
+        }
         else {
-            Event::find($args['id'])->delete();
+            Event::where('id', $args['id'])->update(['deleted' => '1']);
             $this->flash->addMessage('success', "Event deleted!");
             return $response->withRedirect($this->router->pathFor('event.all'));
         }
