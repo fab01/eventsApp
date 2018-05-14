@@ -1,0 +1,70 @@
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h2><i class="fa fa-pencil-square-o" aria-hidden="true"></i> {{ form_title }}</h2>
+            </div>
+            <div class="panel-body">
+                <!-- {{ errors | json_encode }} -->
+                <form action="{{ path_for(form_action) }}" method="post" autocomplete="off" enctype="multipart/form-data">
+
+                    <!--/   ACCOMMODATIONS   \-->
+                    <div class="{{ errors.accommodations ? 'has-error' : '' }}">
+                        {{ form.accommodations | raw }}
+                        {% if errors.accommodations %}
+                            <span class="help-block">{{ errors.accommodations | first }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="help-block"></span>
+
+                    <!--/   ABSTRACTS   \-->
+                    <div class="well">
+                        <h4>Attach an Abstract (optional) with your subscription</h4>
+
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <h4><i class="fa fa-info-circle" aria-hidden="true"></i> The Abstract must contain:</h4>
+                            </div>
+                            <div class="panel-body">
+                                <ul class="list-group">
+                                    <li class="list-group-item"><h5><i class="fa fa-check" aria-hidden="true"></i><em><b> Scientific Session</b></em></h5></li>
+                                    <li class="list-group-item"><h5><i class="fa fa-check" aria-hidden="true"></i><em><b> Title</b></em></h5></li>
+                                    <li class="list-group-item"><h5><i class="fa fa-check" aria-hidden="true"></i><em><b> Authors</b></em></h5></li>
+                                    <li class="list-group-item"><h5><i class="fa fa-check" aria-hidden="true"></i><em><b> Affiliation</b></em></h5></li>
+                                    <li class="list-group-item"><h5><i class="fa fa-check" aria-hidden="true"></i><em><b> Maximum 250 words within the text</b></em></h5></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="{{ errors.abstract_file ? 'has-error' : '' }}">
+                            <label class="btn btn-primary btn-block" for="my-file-selector">
+                                <i class="fa fa-upload" aria-hidden="true"></i> BROWSE FILE {{ form.abstract_file | raw }}
+                            </label>
+                            <span class='label label-success' id="upload-file-info"></span>
+                            <span class="help-block"></span>
+                            <div class="alert alert-info"><i class="fa fa-info-circle" aria-hidden="true"></i> Allowed file extensions: .pdf, .doc, .docx</div>
+                            {% if errors.abstract_file %}
+                                <span class="help-block">{{ errors.abstract_file }}</span>
+                            {% endif %}
+                        </div>
+                        <span class="help-block"></span>
+
+                        <div class="{{ errors.abstract_apply ? 'has-error' : '' }}">
+                            {{ form.abstract_apply | raw }}
+                            {% if errors.abstract_apply %}
+                                <span class="help-block">{{ errors.abstract_apply }}</span>
+                            {% endif %}
+                        </div>
+                        <span class="help-block"></span>
+                    </div>
+
+                    <!--/   SUBMIT   \-->
+                    <button type="submit" class="btn btn-lg btn-primary btn-block"><i class="fa fa-paper-plane" aria-hidden="true"></i> {{ form_submit }}</button>
+
+                    {{ csrf.field | raw }}
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

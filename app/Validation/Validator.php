@@ -26,5 +26,10 @@ class Validator
     {
         return !empty($this->errors);
     }
-}
 
+    public function setCustomErrors($field, $message)
+    {
+        $this->errors[$field] = $message;
+        $_SESSION['errors'][$field] = $message;
+    }
+}

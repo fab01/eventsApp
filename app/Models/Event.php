@@ -31,8 +31,7 @@ class Event extends Model
     public function allWithCountMeetUp() {
         return $this->leftJoin('meetup', 'meetup.event_id', '=', 'event.id')
           ->leftJoin('event_subscription', 'event_subscription.event_id', '=', 'event.id')
-          ->selectRaw('event.*, count(distinct event_subscription.id) as subscriptionCount, count(distinct meetup.id) as meetupCount')
-          ->where('meetup.deleted', 0)
+          ->selectRaw('event.*, count(distinct event_subscription.id) as subscriptionCount, count(case meetup.deleted when 0 then 1 else null end) as meetupCount')
           ->where('event.deleted', 0)
           ->groupBy('event.id')
           ->get();
@@ -44,5 +43,9 @@ class Event extends Model
             return true;
         }
         return false;
+    }
+
+    public function currentEvent() {
+        return $this->select('id')->where('status', '=', 1)->first();
     }
 }

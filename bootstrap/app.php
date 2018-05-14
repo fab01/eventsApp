@@ -142,6 +142,10 @@ $container['MeetUpController'] = function($container) {
     return new \App\Controllers\MeetUpController($container);
 };
 
+$container['SubscriptionController'] = function($container) {
+    return new \App\Controllers\SubscriptionController($container);
+};
+
 $container['AccommodationController'] = function($container) {
   return new \App\Controllers\AccommodationController($container);
 };

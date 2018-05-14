@@ -82,7 +82,7 @@ class EventFields extends Form
      */
     public function selectAll( $id = null )
     {
-        $data = Event::All();
+        $data = Event::All()->where('deleted', 0);
         $options = array();
         foreach ($data as $event) {
             $options[$event->id] = $event->title;

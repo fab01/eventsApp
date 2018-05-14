@@ -22,11 +22,9 @@ class MeetUpController extends Controller
     {
         $meetups = MeetUp::where('event_id', $args['eid'])->where('deleted', 0)->orderBy('date')->get();
         $events = $this->form->getFields('Event')->selectAll($args['eid']);
-
         //$participants = MeetUpSubscription::where("meetup_id", $args['eid'])->count();
         $participants = 0;
         //$remaining = $meetups->available_places - $participants;
-
         return $this->view->render($response, 'controller/meetup/all.html.twig',
           [
             'events' => $events,
@@ -186,7 +184,7 @@ class MeetUpController extends Controller
         else {
             MeetUp::where('id', $args['id'])->update(['deleted' => '1']);
             $this->flash->addMessage('success', "Meetup deleted!");
-            return $response->withRedirect($this->router->pathFor('meetup.all'));
+            return $response->withRedirect($this->router->pathFor('meetup.all.eid', ['eid' => 1]));
         }
     }
 }

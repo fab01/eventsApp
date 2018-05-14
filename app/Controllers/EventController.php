@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Models\Event;
-use Respect\Validation\Rules\Even;
 use Respect\Validation\Validator as v;
 use App\Auth\Auth as Auth;
 

@@ -32,8 +32,18 @@ $app->group('', function() use ($app, $container) {
     $app->get('/password/change', 'PasswordController:getPasswordChange')->setName('auth.password.change'); // PASSWORD CHANGE
     $app->post('/password/change', 'PasswordController:postPasswordChange'); // PASSWORD CHANGE
 
+    //ROUTES PER LE REGISTRAZIONI
+    $app->get('/event/subscription', 'SubscriptionController:getEventSubscriptionCreate')->setName('event.subscription.create');
+    $app->get('/event/subscription/{id}', 'SubscriptionController:getEventSubscriptionUpdate')->setName('event.subscription.update');
+    $app->get('/meetup/subscription', 'SubscriptionController:getMeetUpSubscriptionCreate')->setName('meetup.subscription.create');
+    $app->get('/meetup/subscription/{id}', 'SubscriptionController:getMeetUpSubscriptionUpdate')->setName('meetup.subscription.update');
+    $app->post('/event/subscription', 'SubscriptionController:postEventSubscriptionCreate');
+    $app->post('/event/subscription/{id}', 'SubscriptionController:postEventSubscriptionUpdate');
+    $app->post('/meetup/subscription', 'SubscriptionController:postMeetUpSubscriptionCreate');
+    $app->post('/meetup/subscription/{id}', 'SubscriptionController:postMeetUpSubscriptionUpdate');
+
     /**
-     * Routes accessible to to USER EDITOR.
+     * Routes accessible to to USER EDITOR AND MODERATOR.
      */
     $app->group('', function() use($app, $container) {
 
@@ -67,6 +77,6 @@ $app->group('', function() use ($app, $container) {
 
         })->add(new AdminMiddleware($container));
 
-    })->add(new RoleMiddleware($container, ['moderator']));
+    })->add(new RoleMiddleware($container, ['moderator', 'editor']));
 
 })->add(new AuthMiddleware($container));
