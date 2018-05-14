@@ -10,7 +10,9 @@
  */
 namespace App\Auth;
 
+use App\Models\Event;
 use App\Models\User;
+use App\Models\Subscriber;
 
 class Auth
 {
@@ -100,7 +102,26 @@ class Auth
             return false;
         } else {
             $objUser = (object) $user_data;
+            $subscriber = Subscriber::find($objUser->uid);
+
+            if (NULL == $subscriber) {
+              $subscriber = Subscriber::create([
+                'uid'     => $objUser->uid,
+                'name'    => $objUser->field_first_name['und'][0]['value'],
+                'surname' => $objUser->field_last_name['und'][0]['value'],
+                'email'   => $objUser->mail
+              ]);
+            }
+
+            $event = new Event();
+
             $_SESSION['user'] = $objUser;
+            $_SESSION['uid'] = $subscriber->id;
+            $_SESSION['eid'] = $event->currentEvent()->id;
+            /*echo '<pre>';
+            var_dump($_SESSION['user']);
+            echo '</pre>';
+            die();*/
             return true;
         }
     }
@@ -151,10 +172,43 @@ class Auth
         return json_decode($json_response, TRUE);
     }
 
+    public function getUserDateD7()
+    {
+        // try to get an access token
+        $url = 'http://iim.d7.dry/auth_service/user/login';
+        $params = [
+          "username" => $this->api_username,
+          "password" => $this->api_password,
+        ];
+
+        $ch = curl_init($url);
+        curl_setopt($ch, constant("CURLOPT_" . 'HEADER'), 'Content-Type: application/x-www-form-urlencoded');
+        curl_setopt($ch, constant("CURLOPT_" . 'RETURNTRANSFER'), true);
+        curl_setopt($ch, constant("CURLOPT_" . 'URL'), $url);
+        curl_setopt($ch, constant("CURLOPT_" . 'POST'), true);
+
+        curl_setopt($ch, constant("CURLOPT_" . 'POSTFIELDS'), $params);
+
+        $json_response = curl_exec($ch);
+
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        // evaluate for success response
+        if ($status != 200) {
+            return FALSE;
+        }
+        curl_close($ch);
+        /* DEBUG - Users' data returned by Drupal's Api
+        var_dump(json_decode($json_response, TRUE));
+        die();
+        */
+        return json_decode($json_response, TRUE);
+    }
+
     /**
      * @return mixed|string
      */
-    public function getUserData()
+    /*public function getUserData()
     {
         if ($this->getAccessToken() && is_array($this->getAccessToken())) {
 
@@ -182,34 +236,5 @@ class Auth
         else {
             return 'Forbidden';
         }
-    }
-
-    public function getUserDateD7()
-    {
-        // try to get an access token
-        $url = 'http://iim.d7.dry/auth_service/user/login';
-        $params = [
-          "username" => $this->api_username,
-          "password" => $this->api_password,
-        ];
-
-        $ch = curl_init($url);
-        curl_setopt($ch, constant("CURLOPT_" . 'HEADER'), 'Content-Type: application/x-www-form-urlencoded');
-        curl_setopt($ch, constant("CURLOPT_" . 'RETURNTRANSFER'), true);
-        curl_setopt($ch, constant("CURLOPT_" . 'URL'), $url);
-        curl_setopt($ch, constant("CURLOPT_" . 'POST'), true);
-
-        curl_setopt($ch, constant("CURLOPT_" . 'POSTFIELDS'), $params);
-
-        $json_response = curl_exec($ch);
-
-        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        // evaluate for success response
-        if ($status != 200) {
-            return FALSE;
-        }
-        curl_close($ch);
-        return json_decode($json_response, TRUE);
-    }
+    }*/
 }
