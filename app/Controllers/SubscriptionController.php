@@ -69,6 +69,7 @@ class SubscriptionController extends Controller
         // Validate accommodation.
         $validation = $this->validator->validate($request, ['accommodations' => v::notEmpty()]);
         if ($validation->failed() || !$abstract) {
+            $this->flash->addMessage('error', "Something went wrong with the submission. Check for the errors reported in the form.");
             return $response->withRedirect($this->router->pathFor('event.subscription.create'));
         }
 

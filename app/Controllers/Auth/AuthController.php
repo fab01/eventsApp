@@ -7,6 +7,9 @@
 namespace App\Controllers\Auth;
 
 use App\Controllers\Controller as Controller;
+use App\Controllers\SubscriptionController;
+use App\Models\Event;
+use App\Models\EventSubscription;
 use App\Models\User;
 use Respect\Validation\Validator as v;
 
@@ -92,6 +95,12 @@ class AuthController extends Controller
         if (!$auth) {
             $this->flash->addMessage('error', "Your credentials are incorrect!");
             return $response->withRedirect($this->router->pathFor('auth.signin'));
+        }
+
+        //$event = Event::where('status', 1)->first();
+        $subscription = EventSubscription::where('subscriber_id', $_SESSION['uid'])->first();
+        if (NULL === $subscription && NULL !== $_SESSION['eid']) {
+            return $response->withRedirect($this->router->pathFor('event.subscription.create'));
         }
 
         return $response->withRedirect($this->router->pathFor('home'));

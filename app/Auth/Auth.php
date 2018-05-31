@@ -16,8 +16,8 @@ use App\Models\Subscriber;
 
 class Auth
 {
-    private $client_secret = '';
-    private $client_id = '';
+    private $client_secret = 'admin';
+    private $client_id = 'd943aced-e379-4bcb-b17c-81ba484a1c90';
     private $api_username;
     private $api_password;
     private $role;
@@ -98,13 +98,12 @@ class Auth
         $user = $this->getUserDateD7();
         $user_data = $user['user'];
 
-        if ($user_data == 'Forbidden' && !is_array($user_data)) {
-            return false;
-        } else {
-            $objUser = (object) $user_data;
-            $subscriber = Subscriber::find($objUser->uid);
+        if (NULL !== $user_data && $user_data !== 'Forbidden' && is_array($user_data)) {
 
-            if (NULL == $subscriber) {
+            $objUser = (object) $user_data;
+            $subscriber = Subscriber::where('uid', $objUser->uid)->first();
+
+            if (NULL === $subscriber) {
               $subscriber = Subscriber::create([
                 'uid'     => $objUser->uid,
                 'name'    => $objUser->field_first_name['und'][0]['value'],
@@ -112,18 +111,17 @@ class Auth
                 'email'   => $objUser->mail
               ]);
             }
+            /* @todo: Se l'utente aggiorna i propri dati lato Drupal questi devono essere aggiornati anche lato App. */
 
             $event = new Event();
 
             $_SESSION['user'] = $objUser;
             $_SESSION['uid'] = $subscriber->id;
             $_SESSION['eid'] = $event->currentEvent()->id;
-            /*echo '<pre>';
-            var_dump($_SESSION['user']);
-            echo '</pre>';
-            die();*/
+
             return true;
         }
+        return false;
     }
 
     /**
