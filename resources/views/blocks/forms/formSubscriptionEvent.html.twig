@@ -6,7 +6,7 @@
             </div>
             <div class="panel-body">
                 <!-- {{ errors | json_encode }} -->
-                <form action="{{ path_for(form_action) }}" method="post" autocomplete="off" enctype="multipart/form-data">
+                <form action="{{ path_for(form_action, {'id' : id}) }}" method="post" autocomplete="off" enctype="multipart/form-data">
 
                     <!--/   ACCOMMODATIONS   \-->
                     <div class="{{ errors.accommodations ? 'has-error' : '' }}">
@@ -60,6 +60,9 @@
 
                     <!--/   SUBMIT   \-->
                     <button type="submit" class="btn btn-lg btn-primary btn-block"><i class="fa fa-paper-plane" aria-hidden="true"></i> {{ form_submit }}</button>
+
+                    <!--/   ID (if Edit/Update)   \-->
+                    {{ form.id | raw }}
 
                     {{ csrf.field | raw }}
 
