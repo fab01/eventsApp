@@ -1,5 +1,13 @@
 {% extends 'layout.html.twig' %}
 
 {% block body %}
-    hello! {{ eventId }}
+    <div style="text-align: center">
+        <h1>Welcome back!</h1>
+        {% if status == 1 %}
+            <a href="{{ path_for('event.subscription.create') }}">Go to registration form!</a>
+        {% else %}
+            <h2><i class="fa fa-grav" aria-hidden="true"></i></h2>
+            There's no event currently active.
+        {% endif %}
+    </div>
 {% endblock %}

@@ -17,5 +17,16 @@ class EventSubscription extends Model
     protected $fillable = [
       'event_id',
       'subscriber_id',
+      'abstract',
+      'apply',
     ];
+
+    public function isAuthorized($id)
+    {
+        $subscription = $this->find($id);
+        if ($subscription->subscriber_id === $_SESSION['uid']) {
+            return true;
+        }
+        return false;
+    }
 }

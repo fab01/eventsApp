@@ -8,6 +8,7 @@
 
 namespace App\Controllers;
 
+use App\Models\EventSubscription;
 use Respect\Validation\Exceptions\FalseValException;
 use Respect\Validation\Validator as v;
 
@@ -79,17 +80,21 @@ class SubscriptionController extends Controller
 
     public function getEventSubscriptionUpdate($request, $response, $args)
     {
-        $form = $this->form->getFields('EventSubscription')->updateSet($args['id']);
+        $subscription = new EventSubscription();
+        if ($subscription->isAuthorized($args['id'])) {
+            $form = $this->form->getFields('EventSubscription')->updateSet($args['id']);
 
-        return $this->view->render($response, 'controller/subscription/event.html.twig',
-          [
-            'form_title'  => 'Event subscription Update',
-            'form_submit' => 'Update subscription',
-            'form_action' => 'event.subscription.update',
-            'form' => $form,
-            'id' => $args['id'],
-          ]
-        );
+            return $this->view->render($response, 'controller/subscription/event.html.twig',
+              [
+                'form_title'  => 'Event subscription Update',
+                'form_submit' => 'Update subscription',
+                'form_action' => 'event.subscription.update',
+                'form' => $form,
+                'id' => $args['id'],
+              ]
+            );
+        }
+        return $this->view->render($response, 'http/403.html.twig');
     }
 
     public function postEventSubscriptionUpdate($request, $response)
