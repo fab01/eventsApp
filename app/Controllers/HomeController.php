@@ -16,7 +16,7 @@ class HomeController extends Controller
         $status = (is_object($event)) ? $event->status : NULL;
 
         if (NULL !== $status) {
-            $subscription = EventSubscription::where('subscriber_id', $_SESSION['uid'])->first();
+            $subscription = EventSubscription::where('subscriber_id', $_SESSION['uid'])->where('event_id', $event->id)->first();
             if (NULL === $subscription && NULL !== $_SESSION['eid'] && $event->status == 1) {
                 return $response->withRedirect($this->router->pathFor('event.subscription.create'));
             } else if (NULL !== $subscription && NULL !== $_SESSION['eid'] && $event->status == 1) {

@@ -17,16 +17,23 @@ class SubscriptionController extends Controller
 {
     public function getEventSubscriptionCreate($request, $response, $args)
     {
-        $form = $this->form->getFields('EventSubscription')->createSet();
+        $event = Event::where('status', 1)->first();
+        $status = (is_object($event)) ? $event->status : NULL;
 
-        return $this->view->render($response, 'controller/subscription/event.html.twig',
-          [
-            'form_title'  => 'Event subscription',
-            'form_submit' => 'Subscribe me!',
-            'form_action' => 'event.subscription.create',
-            'form' => $form,
-          ]
-        );
+        if (NULL !== $status && $status == 1) {
+            $form = $this->form->getFields('EventSubscription')->createSet();
+
+            return $this->view->render($response, 'controller/subscription/event.html.twig',
+              [
+                'form_title'  => 'Event subscription',
+                'form_submit' => 'Subscribe me!',
+                'form_action' => 'event.subscription.create',
+                'form' => $form,
+              ]
+            );
+        }
+
+        return $response->withRedirect($this->router->pathFor('home'));
     }
 
     public function postEventSubscriptionCreate($request, $response)

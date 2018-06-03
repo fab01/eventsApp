@@ -24,8 +24,10 @@ class EventSubscription extends Model
     public function isAuthorized($id)
     {
         $subscription = $this->find($id);
-        if ($subscription->subscriber_id === $_SESSION['uid']) {
-            return true;
+        if (is_object($subscription)) {
+            if ($subscription->subscriber_id === $_SESSION['uid']) {
+                return true;
+            }
         }
         return false;
     }
