@@ -8,6 +8,7 @@
 
 namespace App\Controllers;
 
+use App\Models\Event;
 use App\Models\EventSubscription;
 use Respect\Validation\Exceptions\FalseValException;
 use Respect\Validation\Validator as v;
@@ -81,6 +82,9 @@ class SubscriptionController extends Controller
     public function getEventSubscriptionUpdate($request, $response, $args)
     {
         $subscription = new EventSubscription();
+        $event = Event::where('status', 1)->first();
+        $status = (is_object($event)) ? $event->status : NULL;
+
         if ($subscription->isAuthorized($args['id'])) {
             $form = $this->form->getFields('EventSubscription')->updateSet($args['id']);
 
