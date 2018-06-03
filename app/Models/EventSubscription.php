@@ -17,6 +17,7 @@ class EventSubscription extends Model
     protected $fillable = [
       'event_id',
       'subscriber_id',
+      'accommodation_id',
       'abstract',
       'apply',
     ];

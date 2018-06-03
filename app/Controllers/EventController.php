@@ -74,6 +74,11 @@ class EventController extends Controller
           'status' => $request->getParam('status'),
         ]);
 
+        if (!file_exists($this->container->get('upload_directory').$event->id)) {
+            @mkdir($this->container->get('upload_directory').$event->id);
+            @chmod($this->container->get('upload_directory').$event->id, 0777);
+        }
+
         $this->flash->addMessage('success', "Event {$event->title} has been correctly created!");
 
         return $response->withRedirect($this->router->pathFor('event.all'));
@@ -144,7 +149,10 @@ class EventController extends Controller
         }
 
         Event::where('id', $request->getParam('id'))->update($toUpdate);
-
+        if (!file_exists($this->container->get('upload_directory').$request->getParam('id'))) {
+            @mkdir($this->container->get('upload_directory').$request->getParam('id'));
+            @chmod($this->container->get('upload_directory').$request->getParam('id'), 0777);
+        }
         $this->flash->addMessage('success', "Event has been correctly updated!");
 
         return $response->withRedirect($this->router->pathFor('event.all'));

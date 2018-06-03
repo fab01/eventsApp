@@ -10,8 +10,10 @@ namespace App\Controllers;
 
 use App\Models\Event;
 use App\Models\EventSubscription;
+use App\Models\Subscriber;
 use Respect\Validation\Exceptions\FalseValException;
 use Respect\Validation\Validator as v;
+use Slim\Http\UploadedFile;
 
 class SubscriptionController extends Controller
 {
@@ -32,12 +34,12 @@ class SubscriptionController extends Controller
               ]
             );
         }
-
         return $response->withRedirect($this->router->pathFor('home'));
     }
 
     public function postEventSubscriptionCreate($request, $response)
     {
+        $directory     =  $this->container->get('upload_directory') . $_SESSION['eid'];
         $uploadedFiles =  $request->getUploadedFiles();
         $uploadedFile  =  $uploadedFiles['abstract_file'];
         $filename      =  $uploadedFile->getClientFilename();
@@ -82,8 +84,19 @@ class SubscriptionController extends Controller
             return $response->withRedirect($this->router->pathFor('event.subscription.create'));
         }
 
-        // ELSE SUBSCRIBE USER ...
-        //return $response->withRedirect($this->router->pathFor('event.subscription.create'));
+        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+            $filename = $this->moveUploadedFile($directory, $uploadedFile);
+            $subscription = EventSubscription::create([
+              'event_id'         => $_SESSION['eid'],
+              'subscriber_id'    => $_SESSION['uid'],
+              'accommodation_id' => $request->getParam('accommodations'),
+              'abstract'         => $filename,
+              'apply'            => $application,
+            ]);
+            $this->flash->addMessage('success', 'uploaded ' . $filename);
+            return $response->withRedirect($this->router->pathFor('event.subscription.update', ['id' => $subscription->id]));
+        }
+        return $response->withRedirect($this->router->pathFor('event.subscription.create'));
     }
 
     public function getEventSubscriptionUpdate($request, $response, $args)
@@ -110,6 +123,7 @@ class SubscriptionController extends Controller
 
     public function postEventSubscriptionUpdate($request, $response)
     {
+        $directory     =  $this->container->get('upload_directory') . $_SESSION['eid'];
         $uploadedFiles =  $request->getUploadedFiles();
         $uploadedFile  =  $uploadedFiles['abstract_file'];
         $filename      =  $uploadedFile->getClientFilename();
@@ -151,17 +165,34 @@ class SubscriptionController extends Controller
             $this->flash->addMessage('error', "Something went wrong with the submission. Check for the errors reported in the form.");
         }
 
+        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+            $filename = $this->moveUploadedFile($directory, $uploadedFile);
+            $this->flash->addMessage('success', 'uploaded ' . $filename);
+        }
+
         return $response->withRedirect($this->router->pathFor('event.subscription.update', ['id' => $request->getParam('id')]));
 
         // ELSE SUBSCRIBE USER ...
         //return $response->withRedirect($this->router->pathFor('event.subscription.create'));
     }
 
-    public function getMeetupSubscriptionCreate($request, $response, $args) {
+    /* @todo: MeetupSubscription create. */
+    public function getMeetupSubscriptionCreate($request, $response, $args) {}
 
-    }
+    public function postMeetupSubscriptionCreate($request, $response) {}
 
-    public function postMeetupSubscriptionCreate($request, $response) {
+    /**
+     * Moves the uploaded file to the upload directory.
+     *
+     * @param string $directory directory to which the file is moved
+     * @param UploadedFile $uploaded file uploaded file to move
+     * @return string filename of moved file
+     */
+    public function moveUploadedFile($directory, UploadedFile $uploadedFile)
+    {
+        $filename  = time() . '_' . $uploadedFile->getClientFilename();
+        $uploadedFile->moveTo($directory . DIRECTORY_SEPARATOR . $filename);
 
+        return $filename;
     }
 }

@@ -26,6 +26,12 @@ $app = new \Slim\App([
 $container = $app->getContainer();
 
 /**
+ * Upload root directory for Abstracts of subscribers.
+ * dirname() function uses level parameter as PHP version 7.
+ */
+$container['upload_directory'] = dirname(__FILE__, 2) . '/public/uploads/';
+
+/**
  * ELOQUENT ORM.
  * Set and boot Eloquent App.
  * Why Variable $capsule?
@@ -35,6 +41,7 @@ $capsule = new \Illuminate\Database\Capsule\Manager;
 $capsule->addConnection($container['settings']['db']);
 $capsule->setAsGlobal();
 $capsule->bootEloquent();
+
 /**
  * Containers for Database Eloquent.
  */
@@ -49,6 +56,7 @@ $container['db'] = function($container) use($capsule) {
 $container['validator'] = function($container) {
     return new \App\Validation\Validator;
 };
+
 /**
  * Allow Validation library to use our Rules in App\Validation\Rules.
  */
@@ -171,4 +179,3 @@ $container['csrf'] = function($container) {
 
 /* -- // Get routes. \\ -- */
 require __DIR__.'/../app/routes.php';
-
