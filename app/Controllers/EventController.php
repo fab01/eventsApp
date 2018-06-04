@@ -80,7 +80,6 @@ class EventController extends Controller
         }
 
         $this->flash->addMessage('success', "Event {$event->title} has been correctly created!");
-
         return $response->withRedirect($this->router->pathFor('event.all'));
     }
 
@@ -99,8 +98,9 @@ class EventController extends Controller
         $form = $this->form->getFields('Event')->updateSet($args['id']);
 
         // Field Status edit is reserved to Admin.
-        if (!Auth::isAdmin())
+        if (!Auth::isAdmin()) {
             $form['status']->attr(['disabled' => 'disabled']);
+        }
 
         return $this->view->render($response, 'controller/event/manage.html.twig',
           [
@@ -137,7 +137,6 @@ class EventController extends Controller
         }
 
         $validation = $this->validator->validate($request, $params);
-
         if ($validation->failed()) {
             return $response->withRedirect($this->router->pathFor('event.update', ['id' => $request->getParam('id')]));
         }

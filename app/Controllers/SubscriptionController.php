@@ -123,15 +123,14 @@ class SubscriptionController extends Controller
 
     public function postEventSubscriptionUpdate($request, $response)
     {
-        $directory     =  $this->container->get('upload_directory') . $_SESSION['eid'];
         $uploadedFiles =  $request->getUploadedFiles();
+        $application   =  $request->getParam('abstract_apply');
+        $directory     =  $this->container->get('upload_directory') . $_SESSION['eid'];
         $uploadedFile  =  $uploadedFiles['abstract_file'];
         $filename      =  $uploadedFile->getClientFilename();
-        $application   =  $request->getParam('abstract_apply');
         $abstract      =  true;
 
         if (null != $filename || $application) {
-
             // File extensions.
             $file_validation = v::oneOf(
               v::extension('pdf'),
@@ -166,14 +165,23 @@ class SubscriptionController extends Controller
         }
 
         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+
+            // remove old file if exists before replace with new one.
+            $current_file = EventSubscription::find($request->getParam('id'));
+            @unlink($directory . DIRECTORY_SEPARATOR . $current_file->abstract);
+
+            // store data in table.
             $filename = $this->moveUploadedFile($directory, $uploadedFile);
+            $toUpdate = [
+              'abstract' => $filename,
+              'apply'    => $request->getParam('abstract_apply'),
+            ];
+
+            EventSubscription::where('id', $request->getParam('id'))->update($toUpdate);
             $this->flash->addMessage('success', 'uploaded ' . $filename);
         }
 
         return $response->withRedirect($this->router->pathFor('event.subscription.update', ['id' => $request->getParam('id')]));
-
-        // ELSE SUBSCRIBE USER ...
-        //return $response->withRedirect($this->router->pathFor('event.subscription.create'));
     }
 
     /* @todo: MeetupSubscription create. */
@@ -190,7 +198,7 @@ class SubscriptionController extends Controller
      */
     public function moveUploadedFile($directory, UploadedFile $uploadedFile)
     {
-        $filename  = time() . '_' . $uploadedFile->getClientFilename();
+        $filename  = time() . '_' . str_replace(" ", "-", $uploadedFile->getClientFilename());
         $uploadedFile->moveTo($directory . DIRECTORY_SEPARATOR . $filename);
 
         return $filename;
