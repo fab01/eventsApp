@@ -11,6 +11,7 @@ namespace App\Controllers;
 use App\Models\Event;
 use App\Models\EventSubscription;
 use App\Models\Subscriber;
+use PHPMailer\PHPMailer\PHPMailer;
 use Respect\Validation\Exceptions\FalseValException;
 use Respect\Validation\Validator as v;
 use Slim\Http\UploadedFile;
@@ -93,6 +94,7 @@ class SubscriptionController extends Controller
               'abstract'         => $filename,
               'apply'            => $application,
             ]);
+            $mail = new PHPMailer();
             $this->flash->addMessage('success', 'uploaded ' . $filename);
             return $response->withRedirect($this->router->pathFor('event.subscription.update', ['id' => $subscription->id]));
         }
