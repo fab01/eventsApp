@@ -139,7 +139,13 @@ class Auth
     protected function getAccessToken ()
     {
         // try to get an access token
+        
+        /*** Local Dev ***/
         $url = 'http://iim.d7.iim/oauth/token';
+        
+        /*** Production ***/
+        #$url = 'https://www.coram-iim.it/oauth/token';
+        
         $params = [
           "username" => $this->api_username,
           "password" => $this->api_password,
@@ -173,7 +179,13 @@ class Auth
     public function getUserDateD7()
     {
         // try to get an access token
+        
+        /*** Local Dev ***/
         $url = 'http://iim.d7.dry/auth_service/user/login';
+
+        /*** Production ***/
+        //$url = 'https://www.coram-iim.it/auth_service/user/login';
+
         $params = [
           "username" => $this->api_username,
           "password" => $this->api_password,

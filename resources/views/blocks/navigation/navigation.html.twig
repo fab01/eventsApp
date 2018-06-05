@@ -17,9 +17,9 @@
             <ul class="nav navbar-nav">
                 {% if has_role(['moderator']) %}
                     <li><a href="{{ path_for('home') }}">Home</a></li>
-                    <li><a href="{{ path_for('event.all') }}">Eventi</a></li>
-                    <li><a href="{{ path_for('meetup.all') }}">Tavole Rotonde</a></li>
-                    <li><a href="{{ path_for('accommodation.all') }}">Alloggi Partecipanti</a></li>
+                    <li><a href="{{ path_for('event.all') }}">Events</a></li>
+                    <li><a href="{{ path_for('meetup.all') }}">Meetup</a></li>
+                    <li><a href="{{ path_for('accommodation.all') }}">Accommodations</a></li>
                 {% endif %}
             </ul>
 

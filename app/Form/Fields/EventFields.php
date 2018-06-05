@@ -108,7 +108,7 @@ class EventFields extends Form
     public function embeddedList($id = null)
     {
         $list = $this->selectAll($id);
-        $events = $list['events']->label('Seleziona evento dalla lista');
+        $events = $list['events']->label('Select an event from the list');
 
         return $events;
     }

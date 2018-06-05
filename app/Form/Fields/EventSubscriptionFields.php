@@ -44,11 +44,21 @@ class EventSubscriptionFields extends Form
           ->val($this->getMessage('abstract_apply'))
           ->label('For what do you want to apply the file?');
 
+        // CREATE - One Day accommodation date
+        $one_day = F::text()->attr(
+          [
+            'name' => 'one_day',
+            'placeholder' => 'Date for single night',
+          ])
+          ->addClass('js-datepicker')
+          ->addClass('form-control');
+
         // CREATE - Accommodation
         $accommodations_list = new AccommodationFields($this->form);
         $accommodations = $accommodations_list->embeddedList();
 
         $fields = [
+          'one_day' => $one_day,
           'abstract_file' => $abstract_file,
           'abstract_apply' => $abstract_apply,
           'accommodations' => $accommodations,

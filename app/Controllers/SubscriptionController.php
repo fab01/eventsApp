@@ -11,6 +11,7 @@ namespace App\Controllers;
 use App\Models\Event;
 use App\Models\EventSubscription;
 use App\Models\Subscriber;
+use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use Respect\Validation\Exceptions\FalseValException;
 use Respect\Validation\Validator as v;
@@ -18,6 +19,15 @@ use Slim\Http\UploadedFile;
 
 class SubscriptionController extends Controller
 {
+
+    /**
+     * @param $request
+     * @param $response
+     * @param $args
+     *
+     * @return mixed
+     * Create the Event.
+     */
     public function getEventSubscriptionCreate($request, $response, $args)
     {
         $event = Event::where('status', 1)->first();
@@ -28,8 +38,8 @@ class SubscriptionController extends Controller
 
             return $this->view->render($response, 'controller/subscription/event.html.twig',
               [
-                'form_title'  => 'Event subscription',
-                'form_submit' => 'Subscribe me!',
+                'form_title'  => 'Event registration',
+                'form_submit' => 'Register me!',
                 'form_action' => 'event.subscription.create',
                 'form' => $form,
               ]
@@ -47,6 +57,7 @@ class SubscriptionController extends Controller
         $application   =  $request->getParam('abstract_apply');
         $abstract      =  true;
 
+        // If user is updating file.
         if (null != $filename || $application) {
 
             // File extensions.
@@ -85,22 +96,42 @@ class SubscriptionController extends Controller
             return $response->withRedirect($this->router->pathFor('event.subscription.create'));
         }
 
-        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
-            $filename = $this->moveUploadedFile($directory, $uploadedFile);
-            $subscription = EventSubscription::create([
-              'event_id'         => $_SESSION['eid'],
-              'subscriber_id'    => $_SESSION['uid'],
-              'accommodation_id' => $request->getParam('accommodations'),
-              'abstract'         => $filename,
-              'apply'            => $application,
-            ]);
-            $mail = new PHPMailer();
-            $this->flash->addMessage('success', 'uploaded ' . $filename);
+        // Upload file ONLY IF user is currently uploading a file.
+        if (null != $filename || $application) {
+            if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+                $filename = $this->moveUploadedFile($directory, $uploadedFile);
+            } else {
+                $this->flash->addMessage('error', "Something went wrong with file upload.");
+                return $response->withRedirect($this->router->pathFor('event.subscription.create'));
+            }
+        }
+
+        // Save data into DB.
+        $subscription = EventSubscription::create([
+          'accommodation_id' => $request->getParam('accommodations'),
+          'event_id'         => $_SESSION['eid'],
+          'subscriber_id'    => $_SESSION['uid'],
+          'abstract'         => $filename,
+          'apply'            => $application,
+        ]);
+
+        // If DB Save successful, notify via mail and redirect.
+        if (NULL !== $subscription->id) {
+            $this->notifyUser();
             return $response->withRedirect($this->router->pathFor('event.subscription.update', ['id' => $subscription->id]));
         }
+
         return $response->withRedirect($this->router->pathFor('event.subscription.create'));
     }
 
+    /**
+     * @param $request
+     * @param $response
+     * @param $args
+     *
+     * @return mixed
+     * Update the Event.
+     */
     public function getEventSubscriptionUpdate($request, $response, $args)
     {
         $subscription = new EventSubscription();
@@ -112,8 +143,8 @@ class SubscriptionController extends Controller
 
             return $this->view->render($response, 'controller/subscription/event.html.twig',
               [
-                'form_title'  => 'Event subscription Update',
-                'form_submit' => 'Update subscription',
+                'form_title'  => 'Event registration Update',
+                'form_submit' => 'Update registration',
                 'form_action' => 'event.subscription.update',
                 'form' => $form,
                 'id' => $args['id'],
@@ -204,5 +235,55 @@ class SubscriptionController extends Controller
         $uploadedFile->moveTo($directory . DIRECTORY_SEPARATOR . $filename);
 
         return $filename;
+    }
+
+    public function notifyUser()
+    {
+        // Subscriber variables.
+        $client_mail = $_SESSION['user']->mail;
+        $client_name = $_SESSION['user']->field_first_name["und"][0]['value'];
+
+        // @ administrator
+        $sbjAdmin = "New subscriber to IIM event";
+        $msgAdmin = $client_name . " will participate to the next IIM event";
+
+        // @ cliente
+        $sbjClient = "Thank you, " . $client_name;
+        $msgClient = "Subscription to the next IIM Event confirmed!";
+
+        $mail = new PHPMailer();
+
+        try {
+            //Server settings
+            /*$mail->SMTPDebug = 0;                            // Enable verbose debug output
+            $mail->isSMTP();                                 // Set mailer to use SMTP
+            $mail->Host = 'smtp.aruba.it';                   // Specify main and backup SMTP servers
+            $mail->SMTPAuth = true;                          // Enable SMTP authentication
+            $mail->Username = 'noreply-iim@coram-iim.it';    // SMTP username
+            $mail->Password = 'iim2018!';                    // SMTP password
+            $mail->SMTPSecure = 'ssl';                       // Enable TLS encryption, `ssl` also accepted
+            $mail->Port = 465;                               // TCP port to connect to*/
+
+            // Mail to Admin.
+            $mail->setFrom($client_mail);
+            $mail->addAddress('fabriziosabato@gmail.com');
+            $mail->Subject = $sbjAdmin;
+            $mail->Body    = $msgAdmin;
+            $mail->send();
+            $mail->clearAddresses();
+
+            // Mail to Client (Confirmation).
+            $mail->setFrom('noreply@coram-iim.it');
+            $mail->addAddress($client_mail);
+            $mail->Subject = $sbjClient;
+            $mail->Body    = $msgClient;
+            $mail->send();
+
+            $this->flash->addMessage('success', 'Registration submitted!');
+        }
+        catch (Exception $e)
+        {
+            $this->flash->addMessage('error', 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo);
+        }
     }
 }

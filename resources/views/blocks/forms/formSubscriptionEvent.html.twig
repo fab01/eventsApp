@@ -17,9 +17,20 @@
                     </div>
                     <span class="help-block"></span>
 
+                    <!--/   ONE DAY   \-->
+                    <div class="well one_night">
+                        <div class="{{ errors.one_day ? 'has-error' : '' }}">
+                            {{ form.one_day | raw }}
+                            {% if errors.one_day %}
+                                <span class="help-block">{{ errors.one_day | first }}</span>
+                            {% endif %}
+                        </div>
+                        <span class="help-block"></span>
+                    </div>
+
                     <!--/   ABSTRACTS   \-->
                     <div class="well">
-                        <h4>Attach an Abstract (optional) with your subscription</h4>
+                        <h4>Attach an Abstract (optional) with your registration</h4>
 
                         <div class="panel panel-info">
                             <div class="panel-heading">

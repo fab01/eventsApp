@@ -18,6 +18,7 @@ class EventSubscription extends Model
       'event_id',
       'subscriber_id',
       'accommodation_id',
+      'one_night',
       'abstract',
       'apply',
     ];

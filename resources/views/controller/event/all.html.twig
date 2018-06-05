@@ -4,10 +4,10 @@
 
     <div class="row">
         <div class="col-sm-6">
-            <h1>EVENTI IIM</h1>
+            <h1>EVENTS IIM</h1>
         </div>
         <div class="col-sm-3 pull-right">
-            <a class="btn btn-lg btn-primary pull-right" role="button" href="{{ path_for('event.create') }}"><i class="glyphicon-plus"></i> Crea nuovo</a>
+            <a class="btn btn-lg btn-primary pull-right" role="button" href="{{ path_for('event.create') }}"><i class="glyphicon-plus"></i> Create new</a>
         </div>
     </div>
 
@@ -16,11 +16,11 @@
     <table class="table table-hover">
         <thead>
         <tr>
-            <th>Titolo evento</th>
+            <th>Title event</th>
             <th>Status</th>
-            <th>Data Creazione</th>
-            <th>Partecipanti evento</th>
-            <th>Meetup associati</th>
+            <th>Created at</th>
+            <th>N. Participants</th>
+            <th>N. Meetup scheduled</th>
             <th></th>
         </tr>
         </thead>
@@ -39,8 +39,8 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="{{ path_for('event.update', {'id' : event.id }) }}">Edita Evento</a></li>
-                            <li><a href="#">Dettagli evento</a></li>
+                            <li><a href="{{ path_for('event.update', {'id' : event.id }) }}">Edit Event</a></li>
+                            <li><a href="#">Details event</a></li>
                             <li><a href="#" data-href="{{ path_for('event.delete', {'id' : event.id }) }}" data-toggle="modal" data-target="#confirm-delete">Delete</a></li>
                         </ul>
                     </div>

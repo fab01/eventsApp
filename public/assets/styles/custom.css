@@ -14,3 +14,7 @@ body {
 .float-right {
     float:right;
 }
+
+.one_night {
+    display: none;
+}

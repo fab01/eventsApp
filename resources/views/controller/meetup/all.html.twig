@@ -4,10 +4,10 @@
 
     <div class="row">
         <div class="col-sm-6">
-            <h1>TAVOLE ROTONDE</h1>
+            <h1>MEETING</h1>
         </div>
         <div class="col-sm-3 pull-right">
-            <a class="btn btn-lg btn-primary pull-right" role="button" href="{{ path_for('meetup.create') }}"><i class="glyphicon-plus"></i> Crea nuovo</a>
+            <a class="btn btn-lg btn-primary pull-right" role="button" href="{{ path_for('meetup.create') }}"><i class="glyphicon-plus"></i> Create new</a>
         </div>
     </div>
 
@@ -18,19 +18,19 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th>Titlolo meetup</th>
-                <th>Data meetup</th>
-                <th>Creato</th>
-                <th>Partecipanti</th>
-                <th>Posti Tot</th>
-                <th>Disponibili</th>
+                <th>Title meetup</th>
+                <th>Date</th>
+                <th>Created at</th>
+                <th>Participants</th>
+                <th>Total places</th>
+                <th>Still available</th>
             </tr>
         </thead>
         <tbody>
 
         {% if meetups is defined and meetups is empty %}
             <tr>
-                <td colspan="5"><p class="text-warning">Non ci sono meetup programmati per questo evento.</p></td>
+                <td colspan="5"><p class="text-warning">There are no scheduled meetup for this event.</p></td>
             </tr>
         {% endif %}
 
@@ -49,7 +49,7 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="{{ path_for('meetup.update', {'id' : meetup.id}) }}">Edita Meetup</a></li>
+                            <li><a href="{{ path_for('meetup.update', {'id' : meetup.id}) }}">Edit Meetup</a></li>
                             <li><a href="#" data-href="{{ path_for('meetup.delete', {'id' : meetup.id}) }}" data-toggle="modal" data-target="#confirm-delete">Delete</a></li>
                         </ul>
                     </div>

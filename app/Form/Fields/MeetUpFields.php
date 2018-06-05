@@ -15,12 +15,12 @@ class MeetUpFields extends Form
         $title = F::text()->attr('name', 'title')
           ->val($this->getMessage('title'))
           ->addClass('form-control')
-          ->label('Titolo della Tavola Rotonda');
+          ->label('Title of the Meeting');
 
         $places = F::text()->attr('name', 'places')
           ->val($this->getMessage('places'))
           ->addClass('form-control')
-          ->label('Numero massimo di partecipanti');
+          ->label('Max Number of partipants');
 
         $description = F::textarea()->removeAttr('id')
           ->attr([
@@ -29,12 +29,12 @@ class MeetUpFields extends Form
           ])
           ->val($this->getMessage('description'))
           ->addClass('form-control')
-          ->label('Descrizione');
+          ->label('Description');
 
         $date = F::text()->attr(
           [
             'name' => 'date',
-            'placeholder' => 'Data Meetup',
+            'placeholder' => 'Meetup Date',
           ])
           ->addClass('js-datepicker')
           ->addClass('form-control');
@@ -60,12 +60,12 @@ class MeetUpFields extends Form
         $title = F::text()->attr('name', 'title')
           ->val($data->title)
           ->addClass('form-control')
-          ->label('Titolo della Tavola Rotonda');
+          ->label('Title of Meetup');
 
         $places = F::text()->attr('name', 'places')
           ->val($data->available_places)
           ->addClass('form-control')
-          ->label('Numero massimo di partecipanti');
+          ->label('Max number of participants');
 
         $description = F::textarea()->removeAttr('id')
           ->val($data->description)
@@ -74,12 +74,12 @@ class MeetUpFields extends Form
             'id' => 'description',
           ])
           ->addClass('form-control')
-          ->label('Descrizione');
+          ->label('Description');
 
         $date = F::text()->attr(
           [
             'name' => 'date',
-            'placeholder' => 'Data Meetup',
+            'placeholder' => 'Meetup Date',
           ])
           ->val(date_format(date_create($data->date),"d-m-Y"))
           ->addClass('js-datepicker')
