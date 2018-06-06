@@ -8,7 +8,7 @@ $('#confirm-delete').on('show.bs.modal', function(e) {
 
 $('select#fm-14').on('change', function() {
   var $option = $("#fm-14").find("option:selected").val();
-  if($option === '4' || $option === '5') { // 4 and 5 are values for 1 single night.
+  if($option === '4' || $option === '5' || $option === '6') { // 4 and 5 are values for 1 single night.
     $('.one_night').show();
   } else {
     $('.one_night').hide();
@@ -17,7 +17,7 @@ $('select#fm-14').on('change', function() {
 
 $(document).ready(function() {
   var $option = $("#fm-14").find("option:selected").val();
-  if($option === '4' || $option === '5') { // 4 and 5 are values for 1 single night.
+  if($option === '4' || $option === '5'  || $option === '6') { // 4 and 5 are values for 1 single night.
     $('.one_night').show();
   }
 });

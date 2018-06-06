@@ -17,6 +17,8 @@
         <thead>
         <tr>
             <th>Title event</th>
+            <th>Start date</th>
+            <th>End date</th>
             <th>Status</th>
             <th>Created at</th>
             <th>N. Participants</th>
@@ -28,6 +30,8 @@
         {% for event in events %}
             <tr{{ (event.status == 1) ? ' class="success"' : '' }}>
                 <td>{{ event.title }}</td>
+                <td>{{ event.start_date|date('d/m/Y') }}</td>
+                <td>{{ event.end_date|date('d/m/Y') }}</td>
                 <td>{{ (event.status == 0) ? 'Disabilitato' : 'Attivo' }}</td>
                 <td>{{ event.created_at|date('d-m-Y') }}</td>
                 <td><span class="badge">{{ event.subscriptionCount }}</span></td>

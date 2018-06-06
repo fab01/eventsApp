@@ -19,6 +19,24 @@ class EventFields extends Form
           ->addClass('form-control')
           ->label('Title of the event');
 
+        // CREATE - Start Date
+        $start_date = F::text()->attr(
+          [
+            'name' => 'start_date',
+            'placeholder' => 'Event Start Date',
+          ])
+          ->addClass('js-datepicker')
+          ->addClass('form-control');
+
+        // CREATE - End Date
+        $end_date = F::text()->attr(
+          [
+            'name' => 'end_date',
+            'placeholder' => 'Event End Date',
+          ])
+          ->addClass('js-datepicker')
+          ->addClass('form-control');
+
         // CREATE - Status
         $status = F::select()->attr('name', 'status')
           ->options(
@@ -32,6 +50,8 @@ class EventFields extends Form
 
         $fields = [
           'title' => $title,
+          'start_date' => $start_date,
+          'end_date' => $end_date,
           'status' => $status,
         ];
 
@@ -52,6 +72,28 @@ class EventFields extends Form
           ->addClass('form-control')
           ->label('Title of the event');
 
+        // UPDATE - Start Date
+        $start_date_default_value = ($data->start_date !== '0000-00-00 00:00:00') ? date_format(date_create($data->start_date),"d-m-Y") : '';
+        $start_date = F::text()->attr(
+          [
+            'name' => 'start_date',
+            'placeholder' => 'Event Start Date',
+          ])
+          ->val($start_date_default_value)
+          ->addClass('js-datepicker')
+          ->addClass('form-control');
+
+        // UPDATE - End Date
+        $end_date_default_value = ($data->end_date !== '0000-00-00 00:00:00') ? date_format(date_create($data->end_date),"d-m-Y") : '';
+        $end_date = F::text()->attr(
+          [
+            'name' => 'end_date',
+            'placeholder' => 'Event End Date',
+          ])
+          ->val($end_date_default_value)
+          ->addClass('js-datepicker')
+          ->addClass('form-control');
+
         // UPDATE - Status
         $status = F::select()->attr(['name' => 'status'])
           ->options(
@@ -68,6 +110,8 @@ class EventFields extends Form
 
         $fields = [
           'title' => $title,
+          'start_date' => $start_date,
+          'end_date' => $end_date,
           'status' => $status,
           'id' => $eventId,
         ];

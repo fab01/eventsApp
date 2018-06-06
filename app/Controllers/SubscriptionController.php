@@ -38,6 +38,8 @@ class SubscriptionController extends Controller
 
             return $this->view->render($response, 'controller/subscription/event.html.twig',
               [
+                'start_date'  => $event->start_date,
+                'end_date'    => $event->end_date,
                 'form_title'  => 'Event registration',
                 'form_submit' => 'Register me!',
                 'form_action' => 'event.subscription.create',
@@ -50,12 +52,12 @@ class SubscriptionController extends Controller
 
     public function postEventSubscriptionCreate($request, $response)
     {
-        $directory     =  $this->container->get('upload_directory') . $_SESSION['eid'];
+        $abstract      =  NULL;
         $uploadedFiles =  $request->getUploadedFiles();
+        $application   =  $request->getParam('abstract_apply');
         $uploadedFile  =  $uploadedFiles['abstract_file'];
         $filename      =  $uploadedFile->getClientFilename();
-        $application   =  $request->getParam('abstract_apply');
-        $abstract      =  true;
+        $directory     =  $this->container->get('upload_directory') . $_SESSION['eid'];
 
         // If user is updating file.
         if (null != $filename || $application) {
@@ -87,17 +89,33 @@ class SubscriptionController extends Controller
                 );
                 $abstract = false;
             }
+
+            if ($file_validation && $apply_validation) {
+                $abstract = true;
+            }
         }
 
-        // Validate accommodation.
-        $validation = $this->validator->validate($request, ['accommodations' => v::notEmpty()]);
+        // Set validators array (accommodations by default).
+        $validators = [
+          'accommodations' => v::notEmpty()
+        ];
+
+        // Validators for One Night field.
+        $one_night_accommodations = [4, 5, 6,];
+        if (in_array($request->getParam('accommodations'), $one_night_accommodations)) {
+            $event = Event::where('status', 1)->first();
+            $validators['one_day'] = v::notEmpty()->date('d-m-Y')->between($event->start_date, $event->end_date);
+        }
+
+        // Validate form.
+        $validation = $this->validator->validate($request, $validators);
         if ($validation->failed() || !$abstract) {
             $this->flash->addMessage('error', "Something went wrong with the submission. Check for the errors reported in the form.");
             return $response->withRedirect($this->router->pathFor('event.subscription.create'));
         }
 
         // Upload file ONLY IF user is currently uploading a file.
-        if (null != $filename || $application) {
+        if (NULL !== $abstract && TRUE === $abstract) {
             if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
                 $filename = $this->moveUploadedFile($directory, $uploadedFile);
             } else {
@@ -109,6 +127,7 @@ class SubscriptionController extends Controller
         // Save data into DB.
         $subscription = EventSubscription::create([
           'accommodation_id' => $request->getParam('accommodations'),
+          'one_day'          => $request->getParam('one_day'),
           'event_id'         => $_SESSION['eid'],
           'subscriber_id'    => $_SESSION['uid'],
           'abstract'         => $filename,
@@ -161,7 +180,7 @@ class SubscriptionController extends Controller
         $directory     =  $this->container->get('upload_directory') . $_SESSION['eid'];
         $uploadedFile  =  $uploadedFiles['abstract_file'];
         $filename      =  $uploadedFile->getClientFilename();
-        $abstract      =  true;
+        $abstract      =  NULL;
 
         if (null != $filename || $application) {
             // File extensions.
@@ -191,27 +210,34 @@ class SubscriptionController extends Controller
                 );
                 $abstract = false;
             }
+
+            if ($file_validation && $apply_validation) {
+                $abstract = true;
+            }
         }
 
         if (!$abstract) {
             $this->flash->addMessage('error', "Something went wrong with the submission. Check for the errors reported in the form.");
         }
 
-        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+        // Upload file ONLY IF user is currently uploading a file.
+        if (NULL !== $abstract && TRUE === $abstract) {
+            if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
 
-            // remove old file if exists before replace with new one.
-            $current_file = EventSubscription::find($request->getParam('id'));
-            @unlink($directory . DIRECTORY_SEPARATOR . $current_file->abstract);
+                // remove old file if exists before replace with new one.
+                $current_file = EventSubscription::find($request->getParam('id'));
+                @unlink($directory . DIRECTORY_SEPARATOR . $current_file->abstract);
 
-            // store data in table.
-            $filename = $this->moveUploadedFile($directory, $uploadedFile);
-            $toUpdate = [
-              'abstract' => $filename,
-              'apply'    => $request->getParam('abstract_apply'),
-            ];
+                // store data in table.
+                $filename = $this->moveUploadedFile($directory, $uploadedFile);
+                $toUpdate = [
+                  'abstract' => $filename,
+                  'apply' => $request->getParam('abstract_apply'),
+                ];
 
-            EventSubscription::where('id', $request->getParam('id'))->update($toUpdate);
-            $this->flash->addMessage('success', 'uploaded ' . $filename);
+                EventSubscription::where('id', $request->getParam('id'))->update($toUpdate);
+                $this->flash->addMessage('success', 'uploaded ' . $filename);
+            }
         }
 
         return $response->withRedirect($this->router->pathFor('event.subscription.update', ['id' => $request->getParam('id')]));
@@ -254,16 +280,6 @@ class SubscriptionController extends Controller
         $mail = new PHPMailer();
 
         try {
-            //Server settings
-            /*$mail->SMTPDebug = 0;                            // Enable verbose debug output
-            $mail->isSMTP();                                 // Set mailer to use SMTP
-            $mail->Host = 'smtp.aruba.it';                   // Specify main and backup SMTP servers
-            $mail->SMTPAuth = true;                          // Enable SMTP authentication
-            $mail->Username = 'noreply-iim@coram-iim.it';    // SMTP username
-            $mail->Password = 'iim2018!';                    // SMTP password
-            $mail->SMTPSecure = 'ssl';                       // Enable TLS encryption, `ssl` also accepted
-            $mail->Port = 465;                               // TCP port to connect to*/
-
             // Mail to Admin.
             $mail->setFrom($client_mail);
             $mail->addAddress('fabriziosabato@gmail.com');

@@ -14,6 +14,31 @@
                     </div>
                     <span class="help-block"></span>
 
+                    <!--/   START DATE   \-->
+                    <div class="{{ errors.start_date ? 'has-error' : '' }}">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-calendar fa-lg"></i></span>
+                            {{ form.start_date | raw }}
+                        </div>
+                        {% if errors.start_date %}
+                            <span class="help-block">{{ errors.start_date | first }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="help-block"></span>
+
+                    <!--/   END DATE   \-->
+                    <div class="{{ errors.end_date ? 'has-error' : '' }}">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-calendar fa-lg"></i></span>
+                            {{ form.end_date | raw }}
+                        </div>
+                        {% if errors.end_date %}
+                            <span class="help-block">{{ errors.end_date | first }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="help-block"></span>
+
+
                     <!--/   STATUS   \-->
                     <div class="{{ errors.status ? 'has-error' : '' }}">
                         {{ form.status | raw }}

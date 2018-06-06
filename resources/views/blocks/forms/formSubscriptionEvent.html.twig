@@ -19,8 +19,13 @@
 
                     <!--/   ONE DAY   \-->
                     <div class="well one_night">
+                        <label>Choose a night in between: <b>{{ start_date|date('d/m/Y') }}</b> and <b>{{ end_date|date('d/m/Y') }}</b>.</label>
+                        <!--/   DATE   \-->
                         <div class="{{ errors.one_day ? 'has-error' : '' }}">
-                            {{ form.one_day | raw }}
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-calendar fa-lg"></i></span>
+                                {{ form.one_day | raw }}
+                            </div>
                             {% if errors.one_day %}
                                 <span class="help-block">{{ errors.one_day | first }}</span>
                             {% endif %}

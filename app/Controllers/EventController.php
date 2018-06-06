@@ -62,6 +62,8 @@ class EventController extends Controller
           [
             'title' => v::notEmpty(),
             'status' => v::in(['0', '1']),
+            'start_date' => v::notEmpty()->date('d-m-Y'),
+            'end_date' => v::notEmpty()->date('d-m-Y'),
           ]
         );
 
@@ -71,6 +73,8 @@ class EventController extends Controller
 
         $event = Event::create([
           'title'  => $request->getParam('title'),
+          'start_date' => date_format(date_create($request->getParam('start_date')), 'Y-m-d H:i:s'),
+          'end_date' => date_format(date_create($request->getParam('end_date')), 'Y-m-d H:i:s'),
           'status' => $request->getParam('status'),
         ]);
 
@@ -126,9 +130,13 @@ class EventController extends Controller
         $params = [
           'id' => v::notEmpty(),
           'title' => v::notEmpty(),
+          'start_date' => v::notEmpty()->date('d-m-Y'),
+          'end_date' => v::notEmpty()->date('d-m-Y'),
         ];
         $toUpdate = [
-          'title'  => $request->getParam('title')
+          'title'  => $request->getParam('title'),
+          'start_date' => date_format(date_create($request->getParam('start_date')), 'Y-m-d H:i:s'),
+          'end_date' => date_format(date_create($request->getParam('end_date')), 'Y-m-d H:i:s'),
         ];
 
         if (Auth::isAdmin()) {

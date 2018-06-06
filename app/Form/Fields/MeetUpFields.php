@@ -76,12 +76,13 @@ class MeetUpFields extends Form
           ->addClass('form-control')
           ->label('Description');
 
+        $date_default_value = ($data->date !== '0000-00-00 00:00:00') ? date_format(date_create($data->date),"d-m-Y") : '';
         $date = F::text()->attr(
           [
             'name' => 'date',
             'placeholder' => 'Meetup Date',
           ])
-          ->val(date_format(date_create($data->date),"d-m-Y"))
+          ->val($date_default_value)
           ->addClass('js-datepicker')
           ->addClass('form-control');
 
