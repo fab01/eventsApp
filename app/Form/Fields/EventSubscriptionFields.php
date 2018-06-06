@@ -48,7 +48,7 @@ class EventSubscriptionFields extends Form
         $one_day = F::text()->attr(
           [
             'name' => 'one_day',
-            'placeholder' => 'Date for single night',
+            'placeholder' => 'Date for single night/day',
           ])
           ->addClass('js-datepicker')
           ->addClass('form-control');

@@ -104,12 +104,12 @@ class SubscriptionController extends Controller
         $one_night_accommodations = [4, 5, 6,];
         if (in_array($request->getParam('accommodations'), $one_night_accommodations)) {
             $event = Event::where('status', 1)->first();
-            $validators['one_day'] = v::notEmpty()->date('d-m-Y')->between($event->start_date, $event->end_date);
+            $validators['one_day'] = v::notEmpty()->between($event->start_date, $event->end_date);
         }
 
         // Validate form.
         $validation = $this->validator->validate($request, $validators);
-        if ($validation->failed() || !$abstract) {
+        if ($validation->failed() || (!$abstract && NULL !== $abstract)) {
             $this->flash->addMessage('error', "Something went wrong with the submission. Check for the errors reported in the form.");
             return $response->withRedirect($this->router->pathFor('event.subscription.create'));
         }
@@ -125,14 +125,21 @@ class SubscriptionController extends Controller
         }
 
         // Save data into DB.
-        $subscription = EventSubscription::create([
+        $data_set = [
           'accommodation_id' => $request->getParam('accommodations'),
-          'one_day'          => $request->getParam('one_day'),
           'event_id'         => $_SESSION['eid'],
           'subscriber_id'    => $_SESSION['uid'],
           'abstract'         => $filename,
           'apply'            => $application,
-        ]);
+        ];
+
+        if (in_array($request->getParam('accommodations'), $one_night_accommodations)) {
+            $data_set['one_night'] = date_format(
+              date_create($request->getParam('one_day')),
+              'Y-m-d H:i:s'
+            );
+        }
+        $subscription = EventSubscription::create($data_set);
 
         // If DB Save successful, notify via mail and redirect.
         if (NULL !== $subscription->id) {

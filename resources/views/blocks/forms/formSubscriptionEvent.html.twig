@@ -19,7 +19,7 @@
 
                     <!--/   ONE DAY   \-->
                     <div class="well one_night">
-                        <label>Choose a night in between: <b>{{ start_date|date('d/m/Y') }}</b> and <b>{{ end_date|date('d/m/Y') }}</b>.</label>
+                        <label>Choose a night (or day in case of Daily Registration) in between: <b>{{ start_date|date('d/m/Y') }}</b> and <b>{{ end_date|date('d/m/Y') }}</b>.</label>
                         <!--/   DATE   \-->
                         <div class="{{ errors.one_day ? 'has-error' : '' }}">
                             <div class="input-group">
@@ -36,6 +36,11 @@
                     <!--/   ABSTRACTS   \-->
                     <div class="well">
                         <h4>Attach an Abstract (optional) with your registration</h4>
+
+                        <div class="alert alert-warning">
+                            <h3><i class="fa fa-bell-o" aria-hidden="true"></i> Warning!</h3>
+                            <h6 style="padding-left: 30px;">Please, remember to use the abstract template downloadable from the IIM Event page on web site!</h6>
+                        </div>
 
                         <div class="panel panel-info">
                             <div class="panel-heading">
