@@ -35,13 +35,19 @@
 
                     <!--/   ABSTRACTS   \-->
                     <div class="well">
-                        <h4>Attach an Abstract (optional) with your registration</h4>
-
-                        <div class="alert alert-warning">
+                        <h2 style="text-align:center;">Attach an Abstract (optional).</h2>
+                        <p style="text-align:center;" class="text-primary">Please, use the <b>ABSTRACT TEMPLATE</b> downloadable via link below.</p>
+                        
+                        <!--<div class="alert alert-warning">
                             <h3><i class="fa fa-bell-o" aria-hidden="true"></i> Warning!</h3>
-                            <h6 style="padding-left: 30px;">Please, remember to use the abstract template downloadable from the IIM Event page on web site!</h6>
-                        </div>
-
+                            <h6 style="padding-left: 30px;">Please, remember to use the abstract template!</h6>
+                        </div>-->
+                        
+                        <a href="https://www.coram-iim.it/sites/default/files/SaveAsYourLastName.docx" class="btn btn-lg btn-danger btn-block">
+                            <i class="fa fa-download" aria-hidden="true"></i> Download Abstract Template.
+                        </a>
+                        <span class="help-block"></span>
+                        <!--
                         <div class="panel panel-info">
                             <div class="panel-heading">
                                 <h4><i class="fa fa-info-circle" aria-hidden="true"></i> The Abstract must contain:</h4>
@@ -56,6 +62,7 @@
                                 </ul>
                             </div>
                         </div>
+                        -->
 
                         <div class="{{ errors.abstract_file ? 'has-error' : '' }}">
                             <label class="btn btn-primary btn-block" for="my-file-selector">
@@ -63,7 +70,7 @@
                             </label>
                             <span class='label label-success' id="upload-file-info"></span>
                             <span class="help-block"></span>
-                            <div class="alert alert-info"><i class="fa fa-info-circle" aria-hidden="true"></i> Allowed file extensions: .pdf, .doc, .docx</div>
+                            <div class="alert alert-info"><i class="fa fa-info-circle" aria-hidden="true"></i> Allowed file extensions: .doc, .docx</div>
                             {% if errors.abstract_file %}
                                 <span class="help-block">{{ errors.abstract_file }}</span>
                             {% endif %}

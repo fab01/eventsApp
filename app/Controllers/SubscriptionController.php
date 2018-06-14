@@ -64,7 +64,6 @@ class SubscriptionController extends Controller
 
             // File extensions.
             $file_validation = v::oneOf(
-              v::extension('pdf'),
               v::extension('doc'),
               v::extension('docx')
             )->validate($filename);
@@ -76,7 +75,7 @@ class SubscriptionController extends Controller
             if (!$file_validation) {
                 $this->validator->setCustomErrors(
                   'abstract_file',
-                  'Please check the abstract file. Make sue the extension is on of the following: pdf, doc, docx'
+                  'Please check the abstract file. Make sue the extension is on of the following: doc, docx'
                 );
                 $abstract = false;
             }
@@ -192,7 +191,6 @@ class SubscriptionController extends Controller
         if (null != $filename || $application) {
             // File extensions.
             $file_validation = v::oneOf(
-              v::extension('pdf'),
               v::extension('doc'),
               v::extension('docx')
             )->validate($filename);
@@ -204,7 +202,7 @@ class SubscriptionController extends Controller
             if (!$file_validation) {
                 $this->validator->setCustomErrors(
                   'abstract_file',
-                  'Please check the abstract file. Make sue the extension is on of the following: pdf, doc, docx'
+                  'Please check the abstract file. Make sue the extension is on of the following: doc, docx'
                 );
                 $abstract = false;
             }
@@ -282,7 +280,7 @@ class SubscriptionController extends Controller
 
         // @ cliente
         $sbjClient = "Thank you, " . $client_name;
-        $msgClient = "Subscription to the next IIM Event confirmed!";
+        $msgClient = "Subscription to the next IIM Event confirmed! Please remember, you can still add or change Abstract file on your next access to the IIM Event Application!";
 
         $mail = new PHPMailer();
 
@@ -290,6 +288,7 @@ class SubscriptionController extends Controller
             // Mail to Admin.
             $mail->setFrom($client_mail);
             $mail->addAddress('fabriziosabato@gmail.com');
+            $mail->addAddress('gabellini.davide@hsr.it');
             $mail->Subject = $sbjAdmin;
             $mail->Body    = $msgAdmin;
             $mail->send();

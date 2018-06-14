@@ -2,6 +2,47 @@
 
 {% block body %}
 
-    Dettagli Evento
+    <div class="row">
+        <div class="col-sm-6">
+            <h1>LIST OF PARTICIPANTS</h1>
+        </div>
+    </div>
+
+    <span class="help-block"></span>
+
+    <table class="table table-hover table-striped">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>E-mail</th>
+            <th>Accommodation</th>
+            <th>Single Day</th>
+            <th>File</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for subscriber in subscribers %}
+            <tr>
+                <td>{{ subscriber.name }} {{ subscriber.surname }}</td>
+                <td>{{ subscriber.email }}</td>
+                <td>{{ subscriber.title }}</td>
+                <td>
+                    {% if subscriber.one_night != '0000-00-00 00:00:00' %}
+                        {{ subscriber.one_night|date('d-m-Y') }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if subscriber.abstract %}
+                        <a href="{{ path_for('abstract.download', {'id' : subscriber.id }) }}"><i class="fa fa-file-word-o" aria-hidden="true"></i> Download {{ subscriber.apply }}</a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
 {% endblock %}

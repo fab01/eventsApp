@@ -3,8 +3,10 @@
 namespace App\Controllers;
 
 use App\Models\Event;
+use App\Models\EventSubscription;
 use Respect\Validation\Validator as v;
 use App\Auth\Auth as Auth;
+use Slim\Http\Stream;
 
 class EventController extends Controller
 {
@@ -22,6 +24,53 @@ class EventController extends Controller
     {
         $event = new Event();
         return $this->view->render($response, 'controller/event/all.html.twig', ['events' => $event->allWithCountMeetUp()]);
+    }
+
+    /**
+     * @param $request
+     * @param $response
+     *
+     * @return mixed
+     *
+     * Select All events
+     */
+    public function getEventDetails($request, $response)
+    {
+        $subscriptions = new EventSubscription();
+        $subscribers = $subscriptions->getAll();
+        return $this->view->render($response, 'controller/event/details.html.twig',
+          [
+            'subscribers' => $subscribers,
+          ]
+        );
+    }
+
+    /**
+     * @param $request
+     * @param $response
+     *
+     * @return mixed
+     *
+     * Download Abstract.
+     */
+    public function getAbstractDownload($request, $response, $args)
+    {
+        $subscription = EventSubscription::find($args['id']);
+        $file = $this->container->get('upload_directory') . $subscription->event_id . '/' . $subscription->abstract;
+
+        $fh = fopen($file, 'rb');
+        $stream = new Stream($fh); // create a stream instance for the response body
+
+        return $response->withHeader('Content-Type', 'application/force-download')
+          ->withHeader('Content-Type', 'application/octet-stream')
+          ->withHeader('Content-Type', 'application/download')
+          ->withHeader('Content-Description', 'File Transfer')
+          ->withHeader('Content-Transfer-Encoding', 'binary')
+          ->withHeader('Content-Disposition', 'attachment; filename="' . basename($file) . '"')
+          ->withHeader('Expires', '0')
+          ->withHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0')
+          ->withHeader('Pragma', 'public')
+          ->withBody($stream); // all stream contents will be sent to the response
     }
 
     //==== CREATE

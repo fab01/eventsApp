@@ -23,6 +23,14 @@ class EventSubscription extends Model
       'apply',
     ];
 
+    public function getAll() {
+        return $this->leftJoin('subscriber', 'subscriber.id', '=', 'subscriber_id')
+          ->leftJoin('accommodation', 'accommodation.id', '=', 'accommodation_id')
+          ->select('event_subscription.*', 'accommodation.title', 'subscriber.name', 'subscriber.surname', 'subscriber.email')
+          ->where('event_id', '=', $_SESSION['eid'])
+          ->get();
+    }
+
     public function isAuthorized($id)
     {
         $subscription = $this->find($id);

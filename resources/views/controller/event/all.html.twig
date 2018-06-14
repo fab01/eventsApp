@@ -44,7 +44,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href="{{ path_for('event.update', {'id' : event.id }) }}">Edit Event</a></li>
-                            <li><a href="#">Details event</a></li>
+                            <li><a href="{{ path_for('event.details') }}">Details event</a></li>
                             <li><a href="#" data-href="{{ path_for('event.delete', {'id' : event.id }) }}" data-toggle="modal" data-target="#confirm-delete">Delete</a></li>
                         </ul>
                     </div>

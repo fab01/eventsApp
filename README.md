@@ -19,6 +19,7 @@ This application is based on SLIM Micro Framework.
   <li>Eloquent ORM</li>
   <li>Respect validation for form validations</li>
   <li>Slim Csrf</li>
+  <li>PHPMailer</li>
   <li>form-manager: https://github.com/oscarotero/form-manager </li>
 </ul>
 
