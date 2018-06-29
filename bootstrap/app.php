@@ -8,6 +8,7 @@ $app = new \Slim\App([
     'settings' => [
         'displayErrorDetails' => TRUE,
         'db' => [
+            // Dev Local
             'driver' => 'mysql',
             'host' => 'localhost',
             'database' => 'iimEvents',

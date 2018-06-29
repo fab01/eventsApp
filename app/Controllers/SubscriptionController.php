@@ -26,12 +26,19 @@ class SubscriptionController extends Controller
      * @param $args
      *
      * @return mixed
-     * Create the Event.
+     * Render create Event form.
      */
     public function getEventSubscriptionCreate($request, $response, $args)
     {
         $event = Event::where('status', 1)->first();
         $status = (is_object($event)) ? $event->status : NULL;
+
+        if (NULL !== $status) {
+            $subscription = EventSubscription::where('subscriber_id', $_SESSION['uid'])->where('event_id', $event->id)->first();
+            if (NULL !== $subscription && NULL !== $_SESSION['eid'] && $event->status == 1) {
+                return $response->withRedirect($this->router->pathFor('event.subscription.update', ['id' => $subscription->id]));
+            }
+        }
 
         if (NULL !== $status && $status == 1) {
             $form = $this->form->getFields('EventSubscription')->createSet();
@@ -49,7 +56,13 @@ class SubscriptionController extends Controller
         }
         return $response->withRedirect($this->router->pathFor('home'));
     }
-
+    /**
+     * @param $request
+     * @param $response
+     *
+     * @return mixed
+     * Create the Event .
+     */
     public function postEventSubscriptionCreate($request, $response)
     {
         $abstract      =  NULL;
@@ -138,6 +151,14 @@ class SubscriptionController extends Controller
               'Y-m-d H:i:s'
             );
         }
+
+        $check_subscriber = EventSubscription::where('subscriber_id', $_SESSION['uid'])->where('event_id', $_SESSION['eid'])->first();
+
+        if (NULL !== $check_subscriber) { // Avoid duplicated in case user uses 'browser back' button.
+            $this->flash->addMessage('error', "You are already registered to this event.");
+            return $response->withRedirect($this->router->pathFor('event.subscription.create'));
+        }
+
         $subscription = EventSubscription::create($data_set);
 
         // If DB Save successful, notify via mail and redirect.
@@ -155,7 +176,7 @@ class SubscriptionController extends Controller
      * @param $args
      *
      * @return mixed
-     * Update the Event.
+     * Render Update Event form.
      */
     public function getEventSubscriptionUpdate($request, $response, $args)
     {
@@ -179,6 +200,13 @@ class SubscriptionController extends Controller
         return $this->view->render($response, 'http/403.html.twig');
     }
 
+    /**
+     * @param $request
+     * @param $response
+     *
+     * @return mixed
+     * Update the Event.
+     */
     public function postEventSubscriptionUpdate($request, $response)
     {
         $uploadedFiles =  $request->getUploadedFiles();
@@ -268,6 +296,9 @@ class SubscriptionController extends Controller
         return $filename;
     }
 
+    /**
+     * Send email notifications on Event create.
+     */
     public function notifyUser()
     {
         // Subscriber variables.
