@@ -16,6 +16,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use Respect\Validation\Exceptions\FalseValException;
 use Respect\Validation\Validator as v;
 use Slim\Http\UploadedFile;
+use Slim\Http\Stream;
 
 class SubscriptionController extends Controller
 {
@@ -113,7 +114,7 @@ class SubscriptionController extends Controller
         ];
 
         // Validators for One Night field.
-        $one_night_accommodations = [4, 5, 6,];
+        $one_night_accommodations = [4, 5, 6, 7, 8];
         if (in_array($request->getParam('accommodations'), $one_night_accommodations)) {
             $event = Event::where('status', 1)->first();
             $validators['one_day'] = v::notEmpty()->between($event->start_date, $event->end_date);
@@ -181,15 +182,21 @@ class SubscriptionController extends Controller
     public function getEventSubscriptionUpdate($request, $response, $args)
     {
         $subscription = new EventSubscription();
-        $event = Event::where('status', 1)->first();
-        $status = (is_object($event)) ? $event->status : NULL;
+        $checkout = '3 Days - Full board registration.';
+
+        $subscriptionDetails = $subscription->mySubscriptionDetails();
+        if ($subscriptionDetails->one_night !== "") {
+            $checkout = $this->checkInOut($subscriptionDetails->one_night, $subscriptionDetails->accommodation_id);
+        }
 
         if ($subscription->isAuthorized($args['id'])) {
             $form = $this->form->getFields('EventSubscription')->updateSet($args['id']);
 
             return $this->view->render($response, 'controller/subscription/event.html.twig',
               [
-                'form_title'  => 'Event registration Update',
+                'accommodation' => $subscriptionDetails->title,
+                'checkout' => $checkout,
+                'form_title' => 'Event registration Update',
                 'form_submit' => 'Update registration',
                 'form_action' => 'event.subscription.update',
                 'form' => $form,
@@ -338,5 +345,73 @@ class SubscriptionController extends Controller
         {
             $this->flash->addMessage('error', 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo);
         }
+    }
+
+    public function checkInOut($date, $accommodation_id)
+    {
+        $singleNight = [4, 5];
+        $doubleNight = [7, 8];
+
+        if (in_array($accommodation_id, $singleNight)) {
+            // +1 day.
+            $myDate = new \DateTime($date);
+            $checkIn = $myDate->format('d-m-Y');
+            $myDate->modify('+1 day');
+            return 'Check-in: ' . $checkIn . ' Check-Out: ' . $myDate->format('d-m-Y');
+        }
+        if (in_array($accommodation_id, $doubleNight)) {
+            // +2 days.
+            $myDate = new \DateTime($date);
+            $checkIn = $myDate->format('d-m-Y');
+            $myDate->modify('+2 day');
+            return 'Check-in: ' . $checkIn . ' - Check-Out: ' . $myDate->format('d-m-Y');
+        }
+
+        return null;
+    }
+
+    public function getEmailExcel($request, $response, $args)
+    {
+        require_once('../../vendor/phpoffice/phpexcel/Classes/PHPExcel.php');
+
+        $subscriptions = new EventSubscription();
+        $subscribers = $subscriptions->getAll();
+
+        $excel = new \PHPExcel();
+
+        $sheet = $excel->setActiveSheetIndex(0);
+        $i = 1;
+        foreach($subscribers as $subscriber) {
+            $cell = $sheet->getCell("A{$i}");
+            $cell->setValue($subscriber->email);
+            $i++;
+        }
+        $sheet->setSelectedCells('A1');
+        $excel->setActiveSheetIndex(0);
+
+        $excelWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+
+        $excelFileName = '../../public/listEmailSubscribers.xlsx';
+        $excelWriter->save($excelFileName);
+
+        // For Excel2007 and above .xlsx files
+        $response = $response->withHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response = $response->withHeader('Content-Disposition', 'attachment; filename="file.xlsx"');
+
+        $stream = fopen('php://memory', 'r+');
+        fwrite($stream, file_get_contents($excelFileName));
+        rewind($stream);
+
+        return $response->withBody(new \Slim\Http\Stream($stream));
+        /*$subscriptions = new EventSubscription();
+        $subscribers = $subscriptions->getAll();
+        $excel = "";
+        foreach($subscribers as $subscriber) {
+            $excel .= $subscriber->email . "\n";
+        }
+
+        return $response->withHeader('Content-Type', 'application/vnd.ms-excel')
+         ->withHeader('Content-Disposition', 'attachment; filename="' . basename('emailList.xls') . '"');
+        // all stream contents will be sent to the response*/
     }
 }

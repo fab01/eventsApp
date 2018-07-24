@@ -28,7 +28,17 @@ class EventSubscription extends Model
           ->leftJoin('accommodation', 'accommodation.id', '=', 'accommodation_id')
           ->select('event_subscription.*', 'accommodation.title', 'subscriber.name', 'subscriber.surname', 'subscriber.email')
           ->where('event_id', '=', $_SESSION['eid'])
+          ->orderBy('subscriber.surname', 'asc')
+          ->orderBy('subscriber.name', 'asc')
           ->get();
+    }
+
+    public function mySubscriptionDetails() {
+        return $this->leftJoin('accommodation', 'accommodation.id', '=', 'accommodation_id')
+          ->select('event_subscription.*', 'accommodation.title')
+          ->where('event_id', '=', $_SESSION['eid'])
+          ->where('subscriber_id', '=', $_SESSION['uid'])
+          ->first();
     }
 
     public function isAuthorized($id)

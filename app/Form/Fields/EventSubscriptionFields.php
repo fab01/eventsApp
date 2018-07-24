@@ -10,6 +10,7 @@ namespace app\Form\Fields;
 
 use App\Form\Form;
 use App\Models\Accommodation;
+use App\Models\EventSubscription;
 use FormManager\Builder as F;
 use App\Form\Fields\AccommodationFields as AccommodationFields;
 
@@ -48,7 +49,7 @@ class EventSubscriptionFields extends Form
         $one_day = F::text()->attr(
           [
             'name' => 'one_day',
-            'placeholder' => 'Date for single night/day',
+            'placeholder' => 'Date for single/double night',
           ])
           ->addClass('js-datepicker')
           ->addClass('form-control');
@@ -101,6 +102,39 @@ class EventSubscriptionFields extends Form
         $fields = [
           'abstract_file' => $abstract_file,
           'abstract_apply' => $abstract_apply,
+          'id' => $subscriptionId,
+        ];
+
+        return $fields;
+    }
+
+    /**
+     * @return array
+     */
+    public function adminUpdateSet($id)
+    {
+        $data = EventSubscription::find($id);
+
+        // CREATE - One Day accommodation date
+        $one_night_default_value = ($data->one_night !== '0000-00-00 00:00:00') ? date_format(date_create($data->one_night),"d-m-Y") : '';
+        $one_night = F::text()->attr(
+          [
+            'name' => 'one_night',
+            'placeholder' => 'Date for single/double night',
+          ])
+          ->val($one_night_default_value)
+          ->addClass('js-datepicker')
+          ->addClass('form-control');
+
+        // CREATE - Accommodation
+        $accommodations_list = new AccommodationFields($this->form);
+        $accommodations = $accommodations_list->embeddedList($data->accommodation_id);
+
+        $subscriptionId = F::Hidden()->attr(['name' => 'id'])->val($id);
+
+        $fields = [
+          'one_night' => $one_night,
+          'accommodations' => $accommodations,
           'id' => $subscriptionId,
         ];
 

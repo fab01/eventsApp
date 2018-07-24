@@ -97,7 +97,7 @@ class AccommodationController extends Controller
     {
         $form = $this->form->getFields('Accommodation')->updateSet($args['id']);
 
-        return $this->view->render($response, 'controller/event/manage.html.twig',
+        return $this->view->render($response, 'controller/accommodation/manage.html.twig',
           [
             'form_title'  => 'Update accommodation',
             'form_submit' => 'Save',

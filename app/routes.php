@@ -71,6 +71,7 @@ $app->group('', function() use ($app, $container) {
          */
         $app->group('', function() use($app, $container) {
 
+            $app->get('/getEmailExcel', 'SubscriptionController:getEmailExcel')->setName('event.getEmailExcel'); // Download list of email Excel.
             $app->post('/event/create', 'EventController:postEventCreate'); // CREATE EVENTS.
             $app->post('/event/update/{id}', 'EventController:postEventUpdate'); // UPDATE EVENTS.
             $app->get('/event/delete/{id}', 'EventController:getEventDelete')->setName('event.delete'); // DELETE EVENT.
@@ -78,7 +79,9 @@ $app->group('', function() use ($app, $container) {
             $app->post('/meetup/create', 'MeetUpController:postMeetUpCreate'); // CREATE MEETUP.
             $app->post('/meetup/update/{id}', 'MeetUpController:postMeetUpUpdate'); // UPDATE MEETUP.
             $app->get('/meetup/delete/{id}', 'MeetUpController:getMeetUpDelete')->setName('meetup.delete'); // DELETE MEETUP.
-
+            $app->get('/event/details/update/{id}', 'EventController:getEventDetailsUpdate')->setName('event.details.update'); // UPDATE EVENTS DETAILS.
+            $app->post('/event/details/update/{id}', 'EventController:postEventDetailsUpdate'); // UPDATE EVENTS DETAILS.
+            
         })->add(new AdminMiddleware($container));
 
     })->add(new RoleMiddleware($container, ['moderator', 'editor']));

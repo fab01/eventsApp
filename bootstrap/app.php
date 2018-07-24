@@ -17,6 +17,17 @@ $app = new \Slim\App([
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
+            // Production
+            /*
+            'driver' => 'mysql',
+            'host' => '62.149.150.181',
+            'database' => 'Sql633077_4',
+            'username' => 'Sql633077',
+            'password' => '207d077a',
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+            */
         ],
     ],
 ]);

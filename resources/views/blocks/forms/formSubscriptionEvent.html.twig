@@ -5,6 +5,21 @@
                 <h2><i class="fa fa-pencil-square-o" aria-hidden="true"></i> {{ form_title }}</h2>
             </div>
             <div class="panel-body">
+                {% if accommodation %}
+                    <div class="well">
+                        <h3>Your reservation details</h3>
+                        <h5>
+                            <i class="fa fa-bed" aria-hidden="true"></i>
+                            {{ accommodation }}
+                        </h5>
+                        {% if checkout %}
+                            <h5>
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                                {{ checkout }}
+                            </h5>
+                        {% endif %}
+                    </div>
+                {% endif %}
                 <!-- {{ errors | json_encode }} -->
                 <form action="{{ path_for(form_action, {'id' : id}) }}" method="post" autocomplete="off" enctype="multipart/form-data">
 
@@ -20,6 +35,11 @@
                     <!--/   ONE DAY   \-->
                     <div class="well one_night">
                         <label>Choose a night (or day in case of Daily Registration) in between: <b>{{ start_date|date('d/m/Y') }}</b> and <b>{{ end_date|date('d/m/Y') }}</b>.</label>
+                        <label>
+                            If you will choose the <b>2 nights</b> option the system will keep the date as check-in date.
+                            <br />
+                            The check-out will be automatically calculated two days after.
+                        </label>
                         <!--/   DATE   \-->
                         <div class="{{ errors.one_day ? 'has-error' : '' }}">
                             <div class="input-group">

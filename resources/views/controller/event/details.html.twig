@@ -1,7 +1,6 @@
 {% extends 'layout.html.twig' %}
 
 {% block body %}
-
     <div class="row">
         <div class="col-sm-6">
             <h1>LIST OF PARTICIPANTS</h1>
@@ -9,26 +8,41 @@
     </div>
 
     <span class="help-block"></span>
-
     <table class="table table-hover table-striped">
         <thead>
         <tr>
+            <th>#</th>
             <th>Name</th>
             <th>E-mail</th>
             <th>Accommodation</th>
-            <th>Single Day</th>
+            <th>Check-in</th>
+            <th>Check-out</th>
             <th>File</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
+        {% set inc = 1 %}
         {% for subscriber in subscribers %}
             <tr>
-                <td>{{ subscriber.name }} {{ subscriber.surname }}</td>
+                <td>{{ inc }}</td>
+                <td>{{ subscriber.surname }} {{ subscriber.name }}</td>
                 <td>{{ subscriber.email }}</td>
                 <td>{{ subscriber.title }}</td>
                 <td>
                     {% if subscriber.one_night != '0000-00-00 00:00:00' %}
                         {{ subscriber.one_night|date('d-m-Y') }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if subscriber.one_night != '0000-00-00 00:00:00' %}
+                        {% if (subscriber.accommodation_id == '7') or (subscriber.accommodation_id == '8') %}
+                            {{ subscriber.one_night|date_modify("+2 day")|date('d-m-Y') }}
+                        {% else %}
+                            {{ subscriber.one_night|date_modify("+1 day")|date('d-m-Y') }}
+                        {% endif %}
                     {% else %}
                         -
                     {% endif %}
@@ -40,9 +54,12 @@
                         -
                     {% endif %}
                 </td>
+                <td>
+                    <a href="{{ path_for('event.details.update', {'id' : subscriber.id }) }}" class="btn btn-primary btn-xs">Edit</a>
+                </td>
             </tr>
+            {% set inc = inc + 1 %}
         {% endfor %}
         </tbody>
     </table>
-
 {% endblock %}

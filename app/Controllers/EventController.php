@@ -241,4 +241,70 @@ class EventController extends Controller
             return $response->withRedirect($this->router->pathFor('event.all'));
         }
     }
+
+    //==== UPDATE EVENT DETAILS
+
+    /**
+     * @param $request
+     * @param $response
+     *
+     * @return mixed
+     *
+     * Update event details. Get Form.
+     */
+    public function getEventDetailsUpdate($request, $response, $args)
+    {
+        $form = $this->form->getFields('EventSubscription')->adminUpdateSet($args['id']);
+
+        return $this->view->render($response, 'controller/event/update.html.twig',
+          [
+            'form_title'  => 'Update event subscription',
+            'form_submit' => 'Save',
+            'form_action' => 'event.details.update',
+            'form' => $form,
+            'id' => $args['id'],
+          ]
+        );
+    }
+
+    /**
+     * @param $request
+     * @param $response
+     *
+     * @return mixed
+     *
+     * Update event details. On form submit.
+     */
+    public function postEventDetailsUpdate($request, $response)
+    {
+        $not_full_board = [4, 5, 6, 7, 8];
+
+        $params = [
+          'id' => v::notEmpty(),
+          'accommodations' => v::notEmpty(),
+        ];
+        $toUpdate = [
+          'one_night' => '0000-00-00',
+          'accommodation_id' => $request->getParam('accommodations'),
+        ];
+
+        if (in_array($request->getParam('accommodations'), $not_full_board)) {
+            $params = [
+                'one_night' => v::notEmpty()->date('d-m-Y'),
+            ];
+            $toUpdate = [
+                'one_night' => date_format(date_create($request->getParam('one_night')), 'Y-m-d H:i:s'),
+            ];
+        }
+
+        $validation = $this->validator->validate($request, $params);
+        if ($validation->failed()) {
+            return $response->withRedirect($this->router->pathFor('event.details.update', ['id' => $request->getParam('id')]));
+        }
+
+        EventSubscription::where('id', $request->getParam('id'))->update($toUpdate);
+        $this->flash->addMessage('success', "Event details have been correctly updated!");
+
+        return $response->withRedirect($this->router->pathFor('event.details'));
+    }
 }

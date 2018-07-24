@@ -1,0 +1,40 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h2>{{ form_title }}</h2></div>
+            <div class="panel-body">
+                <form action="{{ path_for(form_action, {'id' : id}) }}" method="post" autocomplete="off">
+                    
+                    <!--/   ACCOMMODATIONS   \-->
+                    <div class="{{ errors.accommodations ? 'has-error' : '' }}">
+                        {{ form.accommodations | raw }}
+                        {% if errors.accommodations %}
+                            <span class="help-block">{{ errors.accommodations | first }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="help-block"></span>
+
+                    <!--/   ONE NIGHT DATE   \-->
+                    <div class="{{ errors.one_night ? 'has-error' : '' }}">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-calendar fa-lg"></i></span>
+                            {{ form.one_night | raw }}
+                        </div>
+                        {% if errors.one_night %}
+                            <span class="help-block">{{ errors.one_night | first }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="help-block"></span>
+
+                    <!--/   SUBMIT   \-->
+                    <input type="submit" value="{{ form_submit }}" class="btn btn-lg btn-primary"/>
+
+                    <!--/   ID (if Edit/Update)   \-->
+                    {{ form.id | raw }}
+
+                    {{ csrf.field | raw }}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
