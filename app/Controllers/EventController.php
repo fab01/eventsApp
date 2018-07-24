@@ -34,10 +34,10 @@ class EventController extends Controller
      *
      * Select All events
      */
-    public function getEventDetails($request, $response)
+    public function getEventDetails($request, $response, $args)
     {
         $subscriptions = new EventSubscription();
-        $subscribers = $subscriptions->getAll();
+        $subscribers = $subscriptions->getAll($args['eid']);
         return $this->view->render($response, 'controller/event/details.html.twig',
           [
             'subscribers' => $subscribers,
@@ -277,6 +277,9 @@ class EventController extends Controller
      */
     public function postEventDetailsUpdate($request, $response)
     {
+        /**
+         * @todo: trovare un modo per rendere dinamici i controlli sulla permanenza con date specifiche.
+         */
         $not_full_board = [4, 5, 6, 7, 8];
 
         $params = [
@@ -290,10 +293,9 @@ class EventController extends Controller
 
         if (in_array($request->getParam('accommodations'), $not_full_board)) {
             $params = [
-                'one_night' => v::notEmpty()->date('d-m-Y'),
-            ];
+              'one_night' => v::notEmpty()->date('d-m-Y'),];
             $toUpdate = [
-                'one_night' => date_format(date_create($request->getParam('one_night')), 'Y-m-d H:i:s'),
+              'one_night' => date_format(date_create($request->getParam('one_night')), 'Y-m-d H:i:s'),
             ];
         }
 
@@ -305,6 +307,6 @@ class EventController extends Controller
         EventSubscription::where('id', $request->getParam('id'))->update($toUpdate);
         $this->flash->addMessage('success', "Event details have been correctly updated!");
 
-        return $response->withRedirect($this->router->pathFor('event.details'));
+        return $response->withRedirect($this->router->pathFor('event.details', ['eid' => $request->getParam('eid')]));
     }
 }

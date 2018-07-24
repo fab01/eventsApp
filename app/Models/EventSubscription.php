@@ -23,14 +23,17 @@ class EventSubscription extends Model
       'apply',
     ];
 
-    public function getAll() {
+    public function getAll($eid = null) 
+    {
+        $event_id = (null === $eid) ? $_SESSION['eid'] : $eid;
+
         return $this->leftJoin('subscriber', 'subscriber.id', '=', 'subscriber_id')
-          ->leftJoin('accommodation', 'accommodation.id', '=', 'accommodation_id')
-          ->select('event_subscription.*', 'accommodation.title', 'subscriber.name', 'subscriber.surname', 'subscriber.email')
-          ->where('event_id', '=', $_SESSION['eid'])
-          ->orderBy('subscriber.surname', 'asc')
-          ->orderBy('subscriber.name', 'asc')
-          ->get();
+            ->leftJoin('accommodation', 'accommodation.id', '=', 'accommodation_id')
+            ->select('event_subscription.*', 'accommodation.title', 'subscriber.name', 'subscriber.surname', 'subscriber.email')
+            ->where('event_id', '=', $event_id)
+            ->orderBy('subscriber.surname', 'asc')
+            ->orderBy('subscriber.name', 'asc')
+            ->get();
     }
 
     public function mySubscriptionDetails() {

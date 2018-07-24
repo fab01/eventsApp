@@ -131,10 +131,12 @@ class EventSubscriptionFields extends Form
         $accommodations = $accommodations_list->embeddedList($data->accommodation_id);
 
         $subscriptionId = F::Hidden()->attr(['name' => 'id'])->val($id);
+        $eventId = F::Hidden()->attr(['name' => 'eid'])->val($data->event_id);
 
         $fields = [
           'one_night' => $one_night,
           'accommodations' => $accommodations,
+          'eid' => $eventId,
           'id' => $subscriptionId,
         ];
 

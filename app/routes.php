@@ -54,7 +54,7 @@ $app->group('', function() use ($app, $container) {
         $app->get('/meetup/all/{eid}', 'MeetUpController:getAllByEid')->setName('meetup.all.eid'); // LIST OF MEETUP FILTERED BY Event ID in GET.
         $app->get('/accommodation/all', 'AccommodationController:getAll')->setName('accommodation.all'); // LIST OF ACCOMMODATION.
 
-        $app->get('/event/details', 'EventController:getEventDetails')->setName('event.details'); // DETAILS EVENTS.
+        $app->get('/event/details/{eid}', 'EventController:getEventDetails')->setName('event.details'); // DETAILS EVENTS.
         $app->get('/event/create', 'EventController:getEventCreate')->setName('event.create'); // CREATE EVENTS.
         $app->get('/event/update/{id}', 'EventController:getEventUpdate')->setName('event.update'); // UPDATE EVENTS.
         $app->get('/meetup/update/{id}', 'MeetUpController:getMeetUpUpdate')->setName('meetup.update'); // UPDATE MEETUP.
