@@ -26,7 +26,7 @@
         {% for subscriber in subscribers %}
             <tr>
                 <td>{{ inc }}</td>
-                <td>{{ subscriber.surname }} {{ subscriber.name }}</td>
+                <td>{{ subscriber.surname|lower|capitalize }} {{ subscriber.name|lower|capitalize }}</td>
                 <td>{{ subscriber.email }}</td>
                 <td>{{ subscriber.title }}</td>
                 <td>

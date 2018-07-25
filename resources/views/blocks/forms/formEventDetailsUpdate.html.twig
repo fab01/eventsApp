@@ -1,10 +1,21 @@
 <div class="row">
+
+    <div class="col-md-12">
+        <a href="{{ path_for('event.details', {'eid' : subscriber.event_id}) }}" class="btn btn-md btn-info pull-right"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Back to the list</a>
+    </div>
+
     <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading"><h2>{{ form_title }}</h2></div>
             <div class="panel-body">
                 <form action="{{ path_for(form_action, {'id' : id}) }}" method="post" autocomplete="off">
-                    
+
+                    <h4>
+                        <i class="fa fa-user-circle" aria-hidden="true"></i>
+                        {{ subscriber.name|lower|capitalize }}
+                        {{ subscriber.surname|lower|capitalize }}
+                    </h4>
+
                     <!--/   ACCOMMODATIONS   \-->
                     <div class="{{ errors.accommodations ? 'has-error' : '' }}">
                         {{ form.accommodations | raw }}

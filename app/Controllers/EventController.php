@@ -254,6 +254,9 @@ class EventController extends Controller
      */
     public function getEventDetailsUpdate($request, $response, $args)
     {
+        $subscription = new EventSubscription();
+        $subscriber = $subscription->getSubscriber($args['id']);
+
         $form = $this->form->getFields('EventSubscription')->adminUpdateSet($args['id']);
 
         return $this->view->render($response, 'controller/event/update.html.twig',
@@ -262,6 +265,7 @@ class EventController extends Controller
             'form_submit' => 'Save',
             'form_action' => 'event.details.update',
             'form' => $form,
+            'subscriber'  => $subscriber,
             'id' => $args['id'],
           ]
         );

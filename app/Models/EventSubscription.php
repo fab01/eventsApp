@@ -44,6 +44,13 @@ class EventSubscription extends Model
           ->first();
     }
 
+    public function getSubscriber($id) {
+        return $this->leftJoin('subscriber', 'subscriber.id', '=', 'subscriber_id')
+          ->select('event_subscription.*', 'subscriber.name', 'subscriber.surname')
+          ->where('event_subscription.id', '=', $id)
+          ->first();
+    }
+
     public function isAuthorized($id)
     {
         $subscription = $this->find($id);
