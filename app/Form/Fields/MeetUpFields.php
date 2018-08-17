@@ -103,4 +103,22 @@ class MeetUpFields extends Form
 
         return $fields;
     }
+
+    /**
+     * @param $id
+     *
+     * @return array
+     */
+    public function joinSet($id)
+    {
+        $userId = F::Hidden()->attr(['name' => 'userId'])->val($_SESSION['uid']);
+        $meetUpId = F::Hidden()->attr(['name' => 'id'])->val($id);
+
+        $fields = [
+          'uid' => $userId,
+          'id' => $meetUpId,
+        ];
+
+        return $fields;
+    }
 }

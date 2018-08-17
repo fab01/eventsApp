@@ -10,10 +10,13 @@ namespace App\Controllers;
 
 use App\Models\Event;
 use App\Models\EventSubscription;
+use App\Models\MeetUp;
+use App\Models\MeetUpSubscription;
 use App\Models\Subscriber;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use Respect\Validation\Exceptions\FalseValException;
+use Respect\Validation\Rules\Even;
 use Respect\Validation\Validator as v;
 use Slim\Http\UploadedFile;
 use Slim\Http\Stream;
@@ -33,7 +36,6 @@ class SubscriptionController extends Controller
     {
         $event = Event::where('status', 1)->first();
         $status = (is_object($event)) ? $event->status : NULL;
-
         if (NULL !== $status) {
             $subscription = EventSubscription::where('subscriber_id', $_SESSION['uid'])->where('event_id', $event->id)->first();
             if (NULL !== $subscription && NULL !== $_SESSION['eid'] && $event->status == 1) {
@@ -43,18 +45,18 @@ class SubscriptionController extends Controller
 
         if (NULL !== $status && $status == 1) {
             $form = $this->form->getFields('EventSubscription')->createSet();
-
             return $this->view->render($response, 'controller/subscription/event.html.twig',
               [
-                'start_date'  => $event->start_date,
-                'end_date'    => $event->end_date,
-                'form_title'  => 'Event registration',
-                'form_submit' => 'Register me!',
-                'form_action' => 'event.subscription.create',
-                'form' => $form,
+                'start_date'    => $event->start_date,
+                'end_date'      => $event->end_date,
+                'form_title'    => 'Event registration',
+                'form_submit'   => 'Register me!',
+                'form_action'   => 'event.subscription.create',
+                'form'          => $form,
               ]
             );
         }
+
         return $response->withRedirect($this->router->pathFor('home'));
     }
     /**
@@ -66,12 +68,12 @@ class SubscriptionController extends Controller
      */
     public function postEventSubscriptionCreate($request, $response)
     {
-        $abstract      =  NULL;
-        $uploadedFiles =  $request->getUploadedFiles();
-        $application   =  $request->getParam('abstract_apply');
-        $uploadedFile  =  $uploadedFiles['abstract_file'];
-        $filename      =  $uploadedFile->getClientFilename();
-        $directory     =  $this->container->get('upload_directory') . $_SESSION['eid'];
+        $abstract       =  NULL;
+        $uploadedFiles  =  $request->getUploadedFiles();
+        $application    =  $request->getParam('abstract_apply');
+        $uploadedFile   =  $uploadedFiles['abstract_file'];
+        $filename       =  $uploadedFile->getClientFilename();
+        $directory      =  $this->container->get('upload_directory') . $_SESSION['eid'];
 
         // If user is updating file.
         if (null != $filename || $application) {
@@ -181,26 +183,38 @@ class SubscriptionController extends Controller
      */
     public function getEventSubscriptionUpdate($request, $response, $args)
     {
-        $subscription = new EventSubscription();
-        $checkout = '3 Days - Full board registration.';
+        $subscription   = new EventSubscription();
+        $meetup         = new MeetUp();
+        $event          = new Event();
+
+        $checkout       = '3 Days - Full board registration.';
+        $hasMeetUp      = 0;
+        $allMeetUp      = null;
 
         $subscriptionDetails = $subscription->mySubscriptionDetails();
         if ($subscriptionDetails->one_night !== "") {
             $checkout = $this->checkInOut($subscriptionDetails->one_night, $subscriptionDetails->accommodation_id);
         }
 
+        $meetupListCount = MeetUp::where('deleted', '0')->where('event_id', $_SESSION['eid'])->count();
+        if ($meetupListCount > 0) {
+            $hasMeetUp = 1;
+            $allMeetUp = $meetup->allWithCountSubscribers($event->currentEvent()->id, $_SESSION['uid']);
+        }
+
         if ($subscription->isAuthorized($args['id'])) {
             $form = $this->form->getFields('EventSubscription')->updateSet($args['id']);
-
             return $this->view->render($response, 'controller/subscription/event.html.twig',
               [
-                'accommodation' => $subscriptionDetails->title,
-                'checkout' => $checkout,
-                'form_title' => 'Event registration Update',
-                'form_submit' => 'Update registration',
-                'form_action' => 'event.subscription.update',
-                'form' => $form,
-                'id' => $args['id'],
+                'hasMeetup'         => $hasMeetUp,
+                'allMeetup'         => $allMeetUp,
+                'accommodation'     => $subscriptionDetails->title,
+                'checkout'          => $checkout,
+                'form_title'        => 'Event registration Update',
+                'form_submit'       => 'Update registration',
+                'form_action'       => 'event.subscription.update',
+                'form'              => $form,
+                'id'                => $args['id'],
               ]
             );
         }
@@ -216,12 +230,12 @@ class SubscriptionController extends Controller
      */
     public function postEventSubscriptionUpdate($request, $response)
     {
-        $uploadedFiles =  $request->getUploadedFiles();
-        $application   =  $request->getParam('abstract_apply');
-        $directory     =  $this->container->get('upload_directory') . $_SESSION['eid'];
-        $uploadedFile  =  $uploadedFiles['abstract_file'];
-        $filename      =  $uploadedFile->getClientFilename();
-        $abstract      =  NULL;
+        $uploadedFiles  = $request->getUploadedFiles();
+        $application    = $request->getParam('abstract_apply');
+        $directory      = $this->container->get('upload_directory') . $_SESSION['eid'];
+        $uploadedFile   = $uploadedFiles['abstract_file'];
+        $filename       = $uploadedFile->getClientFilename();
+        $abstract       = NULL;
 
         if (null != $filename || $application) {
             // File extensions.
@@ -284,9 +298,33 @@ class SubscriptionController extends Controller
     }
 
     /* @todo: MeetupSubscription create. */
-    public function getMeetupSubscriptionCreate($request, $response, $args) {}
+    public function getMeetupSubscriptionCreate($request, $response, $args)
+    {
+        // Check places still available.
+        $places             = MeetUp::find($args['id']);
+        $sid                = EventSubscription::where('subscriber_id', $_SESSION['uid'])->where('event_id', $_SESSION['eid'])->first();
+        $subscriptions      = MeetUpSubscription::where('meetup_id', $args['id'])->count();
+        $alreadySubscribed  = MeetUpSubscription::where('meetup_id', $args['id'])->where('subscriber_id', $_SESSION['uid'])->count();
+        $available          = $places->available_places - $subscriptions;
 
-    public function postMeetupSubscriptionCreate($request, $response) {}
+        if ($available > 0 && $alreadySubscribed == 0) {
+            $data_set = [
+              'meetup_id'       => $args['id'],
+              'subscriber_id'   => $_SESSION['uid'],
+            ];
+            $subscription = MeetUpSubscription::create($data_set);
+
+            if (NULL !== $subscription->id) {
+                $this->flash->addMessage('success', 'Meetup Joined!');
+            } else {
+                $this->flash->addMessage('error', 'Oooops! Seems you have been too late! Someone else got the last spot :-( ');
+            }
+        } else {
+            $this->flash->addMessage('error', 'Hey! You are already subscribed!');
+        }
+
+        return $response->withRedirect($this->router->pathFor('event.subscription.update', ['id' => $sid->id]));
+    }
 
     /**
      * Moves the uploaded file to the upload directory.
@@ -347,6 +385,12 @@ class SubscriptionController extends Controller
         }
     }
 
+    /**
+     * @param $date
+     * @param $accommodation_id
+     *
+     * @return null|string
+     */
     public function checkInOut($date, $accommodation_id)
     {
         $singleNight = [4, 5];
@@ -370,28 +414,32 @@ class SubscriptionController extends Controller
         return null;
     }
 
+    /**
+     * @param $request
+     * @param $response
+     * @param $args
+     *
+     * @return mixed
+     */
     public function getEmailExcel($request, $response, $args)
     {
-        require_once('../../vendor/phpoffice/phpexcel/Classes/PHPExcel.php');
-
         $subscriptions = new EventSubscription();
-        $subscribers = $subscriptions->getAll();
+        $subscribers = $subscriptions->getAll($args['eid']);
 
-        $excel = new \PHPExcel();
-
-        $sheet = $excel->setActiveSheetIndex(0);
         $i = 1;
+        $excel = new \PHPExcel();
+        $sheet = $excel->setActiveSheetIndex(0);
         foreach($subscribers as $subscriber) {
             $cell = $sheet->getCell("A{$i}");
             $cell->setValue($subscriber->email);
+            $sheet->setSelectedCells("A{$i}");
             $i++;
         }
-        $sheet->setSelectedCells('A1');
         $excel->setActiveSheetIndex(0);
 
-        $excelWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+        $excelWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
 
-        $excelFileName = '../../public/listEmailSubscribers.xlsx';
+        $excelFileName = '../public/uploads/listEmailSubscribers.xlsx';
         $excelWriter->save($excelFileName);
 
         // For Excel2007 and above .xlsx files
@@ -403,15 +451,39 @@ class SubscriptionController extends Controller
         rewind($stream);
 
         return $response->withBody(new \Slim\Http\Stream($stream));
-        /*$subscriptions = new EventSubscription();
-        $subscribers = $subscriptions->getAll();
-        $excel = "";
-        foreach($subscribers as $subscriber) {
-            $excel .= $subscriber->email . "\n";
+    }
+
+    /**
+     * @param $request
+     * @param $response
+     * @param $args
+     *
+     * @return mixed
+     */
+    public function getZipOfAbstracts($request, $response, $args)
+    {
+        $subscriptions = new EventSubscription();
+        $subscribers = $subscriptions->getAll($args['eid']);
+        foreach ($subscribers as $subscriber) {
+            if (null !== $subscriber->abstract) {
+                exec('zip -r ' . $this->container->get('upload_directory') . 'Abstracts.zip "' . $this->container->get('upload_directory') . $args['eid'] . '/' . $subscriber->abstract . '"');
+            }
         }
 
-        return $response->withHeader('Content-Type', 'application/vnd.ms-excel')
-         ->withHeader('Content-Disposition', 'attachment; filename="' . basename('emailList.xls') . '"');
-        // all stream contents will be sent to the response*/
+        $file = $this->container->get('upload_directory') . 'Abstracts.zip';
+
+        $fh = fopen($file, 'rb');
+        $stream = new Stream($fh); // create a stream instance for the response body
+
+        return $response->withHeader('Content-Type', 'application/force-download')
+          ->withHeader('Content-Type', 'application/octet-stream')
+          ->withHeader('Content-Type', 'application/download')
+          ->withHeader('Content-Description', 'File Transfer')
+          ->withHeader('Content-Transfer-Encoding', 'binary')
+          ->withHeader('Content-Disposition', 'attachment; filename="' . basename($file) . '"')
+          ->withHeader('Expires', '0')
+          ->withHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0')
+          ->withHeader('Pragma', 'public')
+          ->withBody($stream); // all stream contents will be sent to the response
     }
 }

@@ -2,6 +2,18 @@
 
 {% block body %}
 
-    {% include 'blocks/forms/formSubscriptionEvent.html.twig' %}
+    <div class="row">
+
+        <div{{ (hasMeetup == 1) ? ' class="col-md-8"' : ' class="col-md-8 col-md-offset-2"' }} >
+            {% include 'blocks/forms/formSubscriptionEvent.html.twig' %}
+        </div>
+
+        {% if hasMeetup %}
+            <div class="col-md-4">
+                {% include 'blocks/listMeetUp.html.twig' %}
+            </div>
+        {% endif %}
+
+    </div>
 
 {% endblock %}

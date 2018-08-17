@@ -1,121 +1,117 @@
-<div class="row">
-    <div class="col-md-8 col-md-offset-2">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <h2><i class="fa fa-pencil-square-o" aria-hidden="true"></i> {{ form_title }}</h2>
-            </div>
-            <div class="panel-body">
-                {% if accommodation %}
-                    <div class="well">
-                        <h3>Your reservation details</h3>
-                        <h5>
-                            <i class="fa fa-bed" aria-hidden="true"></i>
-                            {{ accommodation }}
-                        </h5>
-                        {% if checkout %}
-                            <h5>
-                                <i class="fa fa-calendar" aria-hidden="true"></i>
-                                {{ checkout }}
-                            </h5>
-                        {% endif %}
-                    </div>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h2><i class="fa fa-pencil-square-o" aria-hidden="true"></i> {{ form_title }}</h2>
+    </div>
+    <div class="panel-body">
+        {% if accommodation %}
+            <div class="well">
+                <h3>Your reservation details</h3>
+                <h5>
+                    <i class="fa fa-bed" aria-hidden="true"></i>
+                    {{ accommodation }}
+                </h5>
+                {% if checkout %}
+                    <h5>
+                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                        {{ checkout }}
+                    </h5>
                 {% endif %}
-                <!-- {{ errors | json_encode }} -->
-                <form action="{{ path_for(form_action, {'id' : id}) }}" method="post" autocomplete="off" enctype="multipart/form-data">
-
-                    <!--/   ACCOMMODATIONS   \-->
-                    <div class="{{ errors.accommodations ? 'has-error' : '' }}">
-                        {{ form.accommodations | raw }}
-                        {% if errors.accommodations %}
-                            <span class="help-block">{{ errors.accommodations | first }}</span>
-                        {% endif %}
-                    </div>
-                    <span class="help-block"></span>
-
-                    <!--/   ONE DAY   \-->
-                    <div class="well one_night">
-                        <label>Choose a night (or day in case of Daily Registration) in between: <b>{{ start_date|date('d/m/Y') }}</b> and <b>{{ end_date|date('d/m/Y') }}</b>.</label>
-                        <label>
-                            If you will choose the <b>2 nights</b> option the system will keep the date as check-in date.
-                            <br />
-                            The check-out will be automatically calculated two days after.
-                        </label>
-                        <!--/   DATE   \-->
-                        <div class="{{ errors.one_day ? 'has-error' : '' }}">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-calendar fa-lg"></i></span>
-                                {{ form.one_day | raw }}
-                            </div>
-                            {% if errors.one_day %}
-                                <span class="help-block">{{ errors.one_day | first }}</span>
-                            {% endif %}
-                        </div>
-                        <span class="help-block"></span>
-                    </div>
-
-                    <!--/   ABSTRACTS   \-->
-                    <div class="well">
-                        <h2 style="text-align:center;">Attach an Abstract (optional).</h2>
-                        <p style="text-align:center;" class="text-primary">Please, use the <b>ABSTRACT TEMPLATE</b> downloadable via link below.</p>
-                        
-                        <!--<div class="alert alert-warning">
-                            <h3><i class="fa fa-bell-o" aria-hidden="true"></i> Warning!</h3>
-                            <h6 style="padding-left: 30px;">Please, remember to use the abstract template!</h6>
-                        </div>-->
-                        
-                        <a href="https://www.coram-iim.it/sites/default/files/SaveAsYourLastName.docx" class="btn btn-lg btn-danger btn-block">
-                            <i class="fa fa-download" aria-hidden="true"></i> Download Abstract Template.
-                        </a>
-                        <span class="help-block"></span>
-                        <!--
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                <h4><i class="fa fa-info-circle" aria-hidden="true"></i> The Abstract must contain:</h4>
-                            </div>
-                            <div class="panel-body">
-                                <ul class="list-group">
-                                    <li class="list-group-item"><h5><i class="fa fa-check" aria-hidden="true"></i><em><b> Scientific Session</b></em></h5></li>
-                                    <li class="list-group-item"><h5><i class="fa fa-check" aria-hidden="true"></i><em><b> Title</b></em></h5></li>
-                                    <li class="list-group-item"><h5><i class="fa fa-check" aria-hidden="true"></i><em><b> Authors</b></em></h5></li>
-                                    <li class="list-group-item"><h5><i class="fa fa-check" aria-hidden="true"></i><em><b> Affiliation</b></em></h5></li>
-                                    <li class="list-group-item"><h5><i class="fa fa-check" aria-hidden="true"></i><em><b> Maximum 250 words within the text</b></em></h5></li>
-                                </ul>
-                            </div>
-                        </div>
-                        -->
-
-                        <div class="{{ errors.abstract_file ? 'has-error' : '' }}">
-                            <label class="btn btn-primary btn-block" for="my-file-selector">
-                                <i class="fa fa-upload" aria-hidden="true"></i> BROWSE FILE {{ form.abstract_file | raw }}
-                            </label>
-                            <span class='label label-success' id="upload-file-info"></span>
-                            <span class="help-block"></span>
-                            <div class="alert alert-info"><i class="fa fa-info-circle" aria-hidden="true"></i> Allowed file extensions: .doc, .docx</div>
-                            {% if errors.abstract_file %}
-                                <span class="help-block">{{ errors.abstract_file }}</span>
-                            {% endif %}
-                        </div>
-                        <span class="help-block"></span>
-
-                        <div class="{{ errors.abstract_apply ? 'has-error' : '' }}">
-                            {{ form.abstract_apply | raw }}
-                            {% if errors.abstract_apply %}
-                                <span class="help-block">{{ errors.abstract_apply }}</span>
-                            {% endif %}
-                        </div>
-                        <span class="help-block"></span>
-                    </div>
-
-                    <!--/   SUBMIT   \-->
-                    <button type="submit" class="btn btn-lg btn-primary btn-block"><i class="fa fa-paper-plane" aria-hidden="true"></i> {{ form_submit }}</button>
-
-                    <!--/   ID (if Edit/Update)   \-->
-                    {{ form.id | raw }}
-
-                    {{ csrf.field | raw }}
-
-                </form>
             </div>
-        </div>
+        {% endif %}
+        <!-- {{ errors | json_encode }} -->
+        <form action="{{ path_for(form_action, {'id' : id}) }}" method="post" autocomplete="off" enctype="multipart/form-data">
+
+            <!--/   ACCOMMODATIONS   \-->
+            <div class="{{ errors.accommodations ? 'has-error' : '' }}">
+                {{ form.accommodations | raw }}
+                {% if errors.accommodations %}
+                    <span class="help-block">{{ errors.accommodations | first }}</span>
+                {% endif %}
+            </div>
+            <span class="help-block"></span>
+
+            <!--/   ONE DAY   \-->
+            <div class="well one_night">
+                <label>Choose a night (or day in case of Daily Registration) in between: <b>{{ start_date|date('d/m/Y') }}</b> and <b>{{ end_date|date('d/m/Y') }}</b>.</label>
+                <label>
+                    If you will choose the <b>2 nights</b> option the system will keep the date as check-in date.
+                    <br />
+                    The check-out will be automatically calculated two days after.
+                </label>
+                <!--/   DATE   \-->
+                <div class="{{ errors.one_day ? 'has-error' : '' }}">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-calendar fa-lg"></i></span>
+                        {{ form.one_day | raw }}
+                    </div>
+                    {% if errors.one_day %}
+                        <span class="help-block">{{ errors.one_day | first }}</span>
+                    {% endif %}
+                </div>
+                <span class="help-block"></span>
+            </div>
+
+            <!--/   ABSTRACTS   \-->
+            <div class="well">
+                <h2 style="text-align:center;">Attach an Abstract (optional).</h2>
+                <p style="text-align:center;" class="text-primary">Please, use the <b>ABSTRACT TEMPLATE</b> downloadable via link below.</p>
+
+                <!--<div class="alert alert-warning">
+                    <h3><i class="fa fa-bell-o" aria-hidden="true"></i> Warning!</h3>
+                    <h6 style="padding-left: 30px;">Please, remember to use the abstract template!</h6>
+                </div>-->
+
+                <a href="https://www.coram-iim.it/sites/default/files/SaveAsYourLastName.docx" class="btn btn-lg btn-danger btn-block">
+                    <i class="fa fa-download" aria-hidden="true"></i> Download Abstract Template.
+                </a>
+                <span class="help-block"></span>
+                <!--
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-info-circle" aria-hidden="true"></i> The Abstract must contain:</h4>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-group">
+                            <li class="list-group-item"><h5><i class="fa fa-check" aria-hidden="true"></i><em><b> Scientific Session</b></em></h5></li>
+                            <li class="list-group-item"><h5><i class="fa fa-check" aria-hidden="true"></i><em><b> Title</b></em></h5></li>
+                            <li class="list-group-item"><h5><i class="fa fa-check" aria-hidden="true"></i><em><b> Authors</b></em></h5></li>
+                            <li class="list-group-item"><h5><i class="fa fa-check" aria-hidden="true"></i><em><b> Affiliation</b></em></h5></li>
+                            <li class="list-group-item"><h5><i class="fa fa-check" aria-hidden="true"></i><em><b> Maximum 250 words within the text</b></em></h5></li>
+                        </ul>
+                    </div>
+                </div>
+                -->
+
+                <div class="{{ errors.abstract_file ? 'has-error' : '' }}">
+                    <label class="btn btn-primary btn-block" for="my-file-selector">
+                        <i class="fa fa-upload" aria-hidden="true"></i> BROWSE FILE {{ form.abstract_file | raw }}
+                    </label>
+                    <span class='label label-success' id="upload-file-info"></span>
+                    <span class="help-block"></span>
+                    <div class="alert alert-info"><i class="fa fa-info-circle" aria-hidden="true"></i> Allowed file extensions: .doc, .docx</div>
+                    {% if errors.abstract_file %}
+                        <span class="help-block">{{ errors.abstract_file }}</span>
+                    {% endif %}
+                </div>
+                <span class="help-block"></span>
+
+                <div class="{{ errors.abstract_apply ? 'has-error' : '' }}">
+                    {{ form.abstract_apply | raw }}
+                    {% if errors.abstract_apply %}
+                        <span class="help-block">{{ errors.abstract_apply }}</span>
+                    {% endif %}
+                </div>
+                <span class="help-block"></span>
+            </div>
+
+            <!--/   SUBMIT   \-->
+            <button type="submit" class="btn btn-lg btn-primary btn-block"><i class="fa fa-paper-plane" aria-hidden="true"></i> {{ form_submit }}</button>
+
+            <!--/   ID (if Edit/Update)   \-->
+            {{ form.id | raw }}
+
+            {{ csrf.field | raw }}
+
+        </form>
     </div>
 </div>

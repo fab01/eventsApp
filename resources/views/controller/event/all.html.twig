@@ -17,12 +17,12 @@
         <thead>
         <tr>
             <th>Title event</th>
-            <th>Start date</th>
+            <th class="hidden-col">Start date</th>
             <th>End date</th>
-            <th>Status</th>
-            <th>Created at</th>
-            <th>N. Participants</th>
-            <th>N. Meetup scheduled</th>
+            <th class="hidden-col">Status</th>
+            <th class="hidden-col">Created at</th>
+            <th>N. Subscr.</th>
+            <th class="hidden-col">N. Meetup</th>
             <th></th>
         </tr>
         </thead>
@@ -30,12 +30,12 @@
         {% for event in events %}
             <tr{{ (event.status == 1) ? ' class="success"' : '' }}>
                 <td>{{ event.title }}</td>
-                <td>{{ event.start_date|date('d/m/Y') }}</td>
+                <td class="hidden-col">{{ event.start_date|date('d/m/Y') }}</td>
                 <td>{{ event.end_date|date('d/m/Y') }}</td>
-                <td>{{ (event.status == 0) ? 'Disabilitato' : 'Attivo' }}</td>
-                <td>{{ event.created_at|date('d-m-Y') }}</td>
+                <td class="hidden-col">{{ (event.status == 0) ? 'Disabilitato' : 'Attivo' }}</td>
+                <td class="hidden-col">{{ event.created_at|date('d-m-Y') }}</td>
                 <td><span class="badge">{{ event.subscriptionCount }}</span></td>
-                <td><span class="badge">{{ event.meetupCount }}</span></td>
+                <td class="hidden-col"><span class="badge">{{ event.meetupCount }}</span></td>
                 <td class="col-xs-2">
                     <div class="btn-group pull-right">
                         <a href="#" class="btn {{ (event.status == 1) ? 'btn-primary' : 'btn-info' }} dropdown-toggle" data-toggle="dropdown" aria-expanded="false">

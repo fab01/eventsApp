@@ -16,8 +16,8 @@ use App\Models\Subscriber;
 
 class Auth
 {
-    private $client_secret = 'admin';
-    private $client_id = 'd943aced-e379-4bcb-b17c-81ba484a1c90';
+    //private $client_secret = 'admin';
+    //private $client_id = 'd943aced-e379-4bcb-b17c-81ba484a1c90';
     private $api_username;
     private $api_password;
     private $role;
@@ -129,51 +129,10 @@ class Auth
      */
     public function logout() {
         unset($_SESSION['user']);
-    }
-
-    /**
-     * @param $request
-     *
-     * @return bool|mixed
-     */
-    protected function getAccessToken ()
-    {
-        // try to get an access token
-        
-        /*** Local Dev ***/
-        $url = 'http://iim.d7.iim/oauth/token';
-        
-        /*** Production ***/
-        #$url = 'https://www.coram-iim.it/oauth/token';
-        
-        $params = [
-          "username" => $this->api_username,
-          "password" => $this->api_password,
-          "client_id" => $this->client_id,
-          "client_secret" => $this->client_secret,
-          "redirect_uri" => 'http://' . $_SERVER["HTTP_HOST"] . $_SERVER["PHP_SELF"],
-          "grant_type" => "password",
-          "scope" => $this->scope,
-        ];
-
+        $url = 'https://www.coram-iim.it/auth_service/user/logout';
         $ch = curl_init($url);
-        curl_setopt($ch, constant("CURLOPT_" . 'HEADER'), 'Content-Type: application/x-www-form-urlencoded');
-        curl_setopt($ch, constant("CURLOPT_" . 'RETURNTRANSFER'), true);
-        curl_setopt($ch, constant("CURLOPT_" . 'URL'), $url);
-        curl_setopt($ch, constant("CURLOPT_" . 'POST'), true);
-
-        curl_setopt($ch, constant("CURLOPT_" . 'POSTFIELDS'), $params);
-
-        $json_response = curl_exec($ch);
-
-        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        // evaluate for success response
-        if ($status != 200) {
-            return FALSE;
-        }
+        curl_exec($ch);
         curl_close($ch);
-        return json_decode($json_response, TRUE);
     }
 
     public function getUserDateD7()
@@ -181,7 +140,7 @@ class Auth
         // try to get an access token
         
         /*** Local Dev ***/
-        $url = 'http://iim.d7.dry/auth_service/user/login';
+        $url = 'http://coram.iim.d7/auth_service/user/login';
 
         /*** Production ***/
         //$url = 'https://www.coram-iim.it/auth_service/user/login';
@@ -246,5 +205,47 @@ class Auth
         else {
             return 'Forbidden';
         }
-    }*/
+    }
+    
+    /**
+     * @param $request
+     *
+     * @return bool|mixed
+     
+    protected function getAccessToken ()
+    {
+        // try to get an access token
+        $url = 'http://coram.iim.d7/oauth/token';
+        //$url = 'https://www.coram-iim.it/oauth/token';
+        
+        $params = [
+          "username" => $this->api_username,
+          "password" => $this->api_password,
+          "client_id" => $this->client_id,
+          "client_secret" => $this->client_secret,
+          "redirect_uri" => 'http://' . $_SERVER["HTTP_HOST"] . $_SERVER["PHP_SELF"],
+          "grant_type" => "password",
+          "scope" => $this->scope,
+        ];
+
+        $ch = curl_init($url);
+        curl_setopt($ch, constant("CURLOPT_" . 'HEADER'), 'Content-Type: application/x-www-form-urlencoded');
+        curl_setopt($ch, constant("CURLOPT_" . 'RETURNTRANSFER'), true);
+        curl_setopt($ch, constant("CURLOPT_" . 'URL'), $url);
+        curl_setopt($ch, constant("CURLOPT_" . 'POST'), true);
+
+        curl_setopt($ch, constant("CURLOPT_" . 'POSTFIELDS'), $params);
+
+        $json_response = curl_exec($ch);
+
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        // evaluate for success response
+        if ($status != 200) {
+            return FALSE;
+        }
+        curl_close($ch);
+        return json_decode($json_response, TRUE);
+    }
+    */
 }

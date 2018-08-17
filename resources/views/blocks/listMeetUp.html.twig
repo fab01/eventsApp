@@ -1,0 +1,37 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h2><i class="fa fa-users" aria-hidden="true"></i> Scheduled MeetUp</h2>
+    </div>
+    <div class="panel-body">
+        <div class="list-group">
+            {% for meetup in allMeetup %}
+                <div class="list-group-item">
+                    <h4 class="list-group-item-heading">{{ meetup.title|raw }}</h4>
+                    <p class="list-group-item-text">{{ meetup.description|raw }}</p>
+                    <ul class="list-group">
+                        <li class="list-group-item"><i class="fa fa-calendar" aria-hidden="true"></i> <strong>{{ meetup.date|date('d/m/Y') }}</strong></li>
+                        <!--<li class="list-group-item">Available places: <span class="badge">{{ meetup.available_places }}</span></li>
+                        <li class="list-group-item">Participants: <span class="badge">{{ meetup.subscriptionCount }}</span></li>-->
+                        {% if meetup.sid == 0 and (meetup.available_places - meetup.subscriptionCount) > 0 %}
+                            <li class="list-group-item">Remaining places <span class="badge alert-danger">{{ "#{ meetup.available_places - meetup.subscriptionCount }" }}</span></li>
+                        {% endif %}
+                    </ul>
+                    {% if meetup.sid == 0 %}
+                        {% if (meetup.available_places - meetup.subscriptionCount) > 0 %}
+                            <a href="#" data-href="{{ path_for('meetup.subscription.create', {'id': meetup.id}) }}" data-toggle="modal" data-target="#confirm-join" class="btn btn-primary btn-block"><i class="fa fa-paw" aria-hidden="true"></i> Join this meetup</a>
+                        {% elseif (meetup.available_places - meetup.subscriptionCount) <= 0 %}
+                            <div class="alert alert-danger">
+                                <i class="fa fa-heartbeat" aria-hidden="true"></i> <strong>Ooops!</strong> You were too late. This meetup is already full :(
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-success">
+                            <i class="fa fa-coffee" aria-hidden="true"></i> <strong>Great!</strong> Your subscription to this meetup is already confirmed ;)
+                        </div>
+                    {% endif %}
+
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

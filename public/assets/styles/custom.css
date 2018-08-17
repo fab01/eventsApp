@@ -18,3 +18,9 @@ body {
 .one_night {
     display: none;
 }
+
+@media screen and (max-width: 620px) {
+    .hidden-col{
+        display:none;
+    }
+}

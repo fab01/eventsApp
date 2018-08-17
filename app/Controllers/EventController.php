@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\Event;
 use App\Models\EventSubscription;
+use App\Models\MeetUp;
 use Respect\Validation\Validator as v;
 use App\Auth\Auth as Auth;
 use Slim\Http\Stream;
@@ -40,7 +41,8 @@ class EventController extends Controller
         $subscribers = $subscriptions->getAll($args['eid']);
         return $this->view->render($response, 'controller/event/details.html.twig',
           [
-            'subscribers' => $subscribers,
+            'eid'           => $args['eid'],
+            'subscribers'   => $subscribers,
           ]
         );
     }
@@ -89,10 +91,10 @@ class EventController extends Controller
 
         return $this->view->render($response, 'controller/event/manage.html.twig',
           [
-            'form_title'  => 'Create new event',
-            'form_submit' => 'Create event',
-            'form_action' => 'event.create',
-            'form' => $form,
+            'form_title'    => 'Create new event',
+            'form_submit'   => 'Create event',
+            'form_action'   => 'event.create',
+            'form'          => $form,
           ]
         );
     }
@@ -109,10 +111,10 @@ class EventController extends Controller
     {
         $validation = $this->validator->validate($request,
           [
-            'title' => v::notEmpty(),
-            'status' => v::in(['0', '1']),
-            'start_date' => v::notEmpty()->date('d-m-Y'),
-            'end_date' => v::notEmpty()->date('d-m-Y'),
+            'title'         => v::notEmpty(),
+            'status'        => v::in(['0', '1']),
+            'start_date'    => v::notEmpty()->date('d-m-Y'),
+            'end_date'      => v::notEmpty()->date('d-m-Y'),
           ]
         );
 
@@ -121,11 +123,17 @@ class EventController extends Controller
         }
 
         $event = Event::create([
-          'title'  => $request->getParam('title'),
-          'start_date' => date_format(date_create($request->getParam('start_date')), 'Y-m-d H:i:s'),
-          'end_date' => date_format(date_create($request->getParam('end_date')), 'Y-m-d H:i:s'),
-          'status' => $request->getParam('status'),
+          'title'       => $request->getParam('title'),
+          'start_date'  => date_format(date_create($request->getParam('start_date')), 'Y-m-d H:i:s'),
+          'end_date'    => date_format(date_create($request->getParam('end_date')), 'Y-m-d H:i:s'),
+          'status'      => $request->getParam('status'),
         ]);
+
+        // Only one Event can be active.
+        if ($request->getParam('status') == 1) {
+            Event::where('id', '<>', $event->id)->update(['status' => 0]);
+            $_SESSION['eid'] = $event->id;
+        }
 
         if (!file_exists($this->container->get('upload_directory').$event->id)) {
             @mkdir($this->container->get('upload_directory').$event->id);
@@ -157,11 +165,11 @@ class EventController extends Controller
 
         return $this->view->render($response, 'controller/event/manage.html.twig',
           [
-            'form_title'  => 'Update event',
-            'form_submit' => 'Save',
-            'form_action' => 'event.update',
-            'form' => $form,
-            'id' => $args['id'],
+            'form_title'    => 'Update event',
+            'form_submit'   => 'Save',
+            'form_action'   => 'event.update',
+            'form'          => $form,
+            'id'            => $args['id'],
           ]
         );
     }
@@ -177,15 +185,15 @@ class EventController extends Controller
     public function postEventUpdate($request, $response)
     {
         $params = [
-          'id' => v::notEmpty(),
-          'title' => v::notEmpty(),
-          'start_date' => v::notEmpty()->date('d-m-Y'),
-          'end_date' => v::notEmpty()->date('d-m-Y'),
+          'id'          => v::notEmpty(),
+          'title'       => v::notEmpty(),
+          'start_date'  => v::notEmpty()->date('d-m-Y'),
+          'end_date'    => v::notEmpty()->date('d-m-Y'),
         ];
         $toUpdate = [
-          'title'  => $request->getParam('title'),
-          'start_date' => date_format(date_create($request->getParam('start_date')), 'Y-m-d H:i:s'),
-          'end_date' => date_format(date_create($request->getParam('end_date')), 'Y-m-d H:i:s'),
+          'title'       => $request->getParam('title'),
+          'start_date'  => date_format(date_create($request->getParam('start_date')), 'Y-m-d H:i:s'),
+          'end_date'    => date_format(date_create($request->getParam('end_date')), 'Y-m-d H:i:s'),
         ];
 
         if (Auth::isAdmin()) {
@@ -200,11 +208,12 @@ class EventController extends Controller
 
         // Only one Event can be active.
         if ($request->getParam('status') == 1) {
-            Event::where('id', '<>', $request->getParam('id'))
-              ->update(['status' => 0]);
+            Event::where('id', '<>', $request->getParam('id'))->update(['status' => 0]);
+            $_SESSION['eid'] = $request->getParam('id');
         }
 
         Event::where('id', $request->getParam('id'))->update($toUpdate);
+
         if (!file_exists($this->container->get('upload_directory').$request->getParam('id'))) {
             @mkdir($this->container->get('upload_directory').$request->getParam('id'));
             @chmod($this->container->get('upload_directory').$request->getParam('id'), 0777);
@@ -261,12 +270,12 @@ class EventController extends Controller
 
         return $this->view->render($response, 'controller/event/update.html.twig',
           [
-            'form_title'  => 'Update event subscription',
-            'form_submit' => 'Save',
-            'form_action' => 'event.details.update',
-            'form' => $form,
-            'subscriber'  => $subscriber,
-            'id' => $args['id'],
+            'form_title'    => 'Update event subscription',
+            'form_submit'   => 'Save',
+            'form_action'   => 'event.details.update',
+            'form'          => $form,
+            'subscriber'    => $subscriber,
+            'id'            => $args['id'],
           ]
         );
     }
@@ -287,20 +296,21 @@ class EventController extends Controller
         $not_full_board = [4, 5, 6, 7, 8];
 
         $params = [
-          'id' => v::notEmpty(),
-          'accommodations' => v::notEmpty(),
+          'id'              => v::notEmpty(),
+          'accommodations'  => v::notEmpty(),
         ];
         $toUpdate = [
-          'one_night' => '0000-00-00',
-          'accommodation_id' => $request->getParam('accommodations'),
+          'one_night'           => '0000-00-00',
+          'accommodation_id'    => $request->getParam('accommodations'),
         ];
 
         if (in_array($request->getParam('accommodations'), $not_full_board)) {
             $params = [
-              'one_night' => v::notEmpty()->date('d-m-Y'),];
+                'one_night' => v::notEmpty()->date('d-m-Y'),
+              ];
             $toUpdate = [
-              'one_night' => date_format(date_create($request->getParam('one_night')), 'Y-m-d H:i:s'),
-            ];
+                'one_night' => date_format(date_create($request->getParam('one_night')), 'Y-m-d H:i:s'),
+              ];
         }
 
         $validation = $this->validator->validate($request, $params);

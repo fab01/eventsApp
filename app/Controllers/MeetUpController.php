@@ -20,16 +20,36 @@ class MeetUpController extends Controller
 
     public function getAllByEid($request, $response, $args)
     {
-        $meetups = MeetUp::where('event_id', $args['eid'])->where('deleted', 0)->orderBy('date')->get();
+        $meetup = new MeetUp();
+        $meetUps = $meetup->allWithCountSubscribers($args['eid']);
         $events = $this->form->getFields('Event')->selectAll($args['eid']);
-        //$participants = MeetUpSubscription::where("meetup_id", $args['eid'])->count();
-        $participants = 0;
-        //$remaining = $meetups->available_places - $participants;
+
         return $this->view->render($response, 'controller/meetup/all.html.twig',
           [
-            'events' => $events,
-            'meetups' => $meetups,
-            'participants' => $participants,
+            'events'    => $events,
+            'meetUps'   => $meetUps,
+          ]
+        );
+    }
+
+    /**
+     * @param $request
+     * @param $response
+     * @param $args
+     *
+     * @return mixed
+     */
+    public function getMeetUpDetails($request, $response, $args)
+    {
+        $meetUpSubscriptions = new MeetUpSubscription();
+        $subscribers = $meetUpSubscriptions->allParticipantsByMeetupId($args['id']);
+        $meetup = MeetUp::find($args['id']);
+
+        return $this->view->render($response, 'controller/meetup/details.html.twig',
+          [
+            'subscribers'   => $subscribers,
+            'eventId'       => $meetup->event_id,
+            'id'            => $args['id'],
           ]
         );
     }
@@ -42,16 +62,14 @@ class MeetUpController extends Controller
      */
     public function postAll($request, $response)
     {
-        $meetups = MeetUp::where('event_id', $request->getParam('events'))->where('deleted', 0)->orderBy('date')->get();
+        $meetup = new MeetUp();
+        $meetUps = $meetup->allWithCountSubscribers($request->getParam('events'));
         $events = $this->form->getFields('Event')->selectAll($request->getParam('events'));
-
-        $participants = MeetUpSubscription::where("meetup_id", $request->getParam('events'))->count();
 
         return $this->view->render($response, 'controller/meetup/all.html.twig',
           [
-            'events' => $events,
-            'meetups' => $meetups,
-            'participants' => $participants,
+            'events'    => $events,
+            'meetUps'   => $meetUps,
           ]
         );
     }
@@ -63,10 +81,10 @@ class MeetUpController extends Controller
 
         return $this->view->render($response, 'controller/meetup/manage.html.twig',
           [
-            'form_title'  => 'Crea nuova Tavola Rotonda',
-            'form_submit' => 'Crea Tavola Rotonda',
-            'form_action' => 'meetup.create',
-            'form' => $form,
+            'form_title'    => 'Crea nuova Tavola Rotonda',
+            'form_submit'   => 'Crea Tavola Rotonda',
+            'form_action'   => 'meetup.create',
+            'form'          => $form,
           ]
         );
     }
@@ -75,10 +93,10 @@ class MeetUpController extends Controller
     {
         $validation = $this->validator->validate($request,
           [
-            'title' => v::notEmpty(),
-            'date' => v::notEmpty()->date('d-m-Y'),
-            'events' => v::notEmpty(),
-            'places' => v::notEmpty()->min(1, true),
+            'title'     => v::notEmpty(),
+            'date'      => v::notEmpty()->date('d-m-Y'),
+            'events'    => v::notEmpty(),
+            'places'    => v::notEmpty()->min(1, true),
           ]
         );
 
@@ -87,11 +105,11 @@ class MeetUpController extends Controller
         }
 
         $meetup = MeetUp::create([
-          'title'  => $request->getParam('title'),
-          'date' => date_format(date_create($request->getParam('date')), 'Y-m-d H:i:s'),
-          'description' => $request->getParam('description'),
-          'event_id' => $request->getParam('events'),
-          'available_places' => $request->getParam('places'),
+          'title'               => $request->getParam('title'),
+          'date'                => date_format(date_create($request->getParam('date')), 'Y-m-d H:i:s'),
+          'description'         => $request->getParam('description'),
+          'event_id'            => $request->getParam('events'),
+          'available_places'    => $request->getParam('places'),
         ]);
 
         $this->flash->addMessage('success', "Meetup {$meetup->title} has been correctly created!");
@@ -116,12 +134,12 @@ class MeetUpController extends Controller
 
         return $this->view->render($response, 'controller/meetup/manage.html.twig',
           [
-            'form_title'  => 'Update MeetUp',
-            'form_submit' => 'Save',
-            'form_action' => 'meetup.update',
-            'form' => $form,
-            'eventId' => $meetup->event_id,
-            'id' => $args['id'],
+            'form_title'    => 'Update MeetUp',
+            'form_submit'   => 'Save',
+            'form_action'   => 'meetup.update',
+            'form'          => $form,
+            'eventId'       => $meetup->event_id,
+            'id'            => $args['id'],
           ]
         );
     }
@@ -137,19 +155,19 @@ class MeetUpController extends Controller
     public function postMeetUpUpdate($request, $response)
     {
         $params = [
-          'id' => v::notEmpty(),
-          'title' => v::notEmpty(),
-          'date' => v::notEmpty()->date('d-m-Y'),
-          'events' => v::notEmpty(),
-          'places' => v::notEmpty()->min(1, true),
+          'id'      => v::notEmpty(),
+          'title'   => v::notEmpty(),
+          'date'    => v::notEmpty()->date('d-m-Y'),
+          'events'  => v::notEmpty(),
+          'places'  => v::notEmpty()->min(1, true),
         ];
 
         $toUpdate = [
-          'title'  => $request->getParam('title'),
-          'date' => date_format(date_create($request->getParam('date')), 'Y-m-d H:i:s'),
-          'description' => $request->getParam('description'),
-          'event_id' => $request->getParam('events'),
-          'available_places' => $request->getParam('places'),
+          'title'               => $request->getParam('title'),
+          'date'                => date_format(date_create($request->getParam('date')), 'Y-m-d H:i:s'),
+          'description'         => $request->getParam('description'),
+          'event_id'            => $request->getParam('events'),
+          'available_places'    => $request->getParam('places'),
         ];
 
         $validation = $this->validator->validate($request, $params);
@@ -159,7 +177,6 @@ class MeetUpController extends Controller
         }
 
         MeetUp::where('id', $request->getParam('id'))->update($toUpdate);
-
         $this->flash->addMessage('success', "Meetup has been correctly updated!");
 
         return $response->withRedirect($this->router->pathFor('meetup.update', ['id' => $request->getParam('id'), 'eventId' =>  $request->getParam('events')]));

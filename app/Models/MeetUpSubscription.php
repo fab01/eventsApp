@@ -19,8 +19,12 @@ class MeetUpSubscription extends Model
       'subscriber_id',
     ];
 
-    public function allSubscribersByMeetupId($id)
+    public function allParticipantsByMeetupId($id)
     {
-        return $this->count()->where("meetup_id", $id);
+        return $this->leftJoin('subscriber', 'subscriber.id', '=', 'meetup_subscription.subscriber_id')
+          ->selectRaw('subscriber.*')
+          ->where('meetup_subscription.meetup_id', $id)
+          ->groupBy('meetup_subscription.id')
+          ->get();
     }
 }

@@ -19,9 +19,9 @@
         <thead>
             <tr>
                 <th>Title meetup</th>
-                <th>Date</th>
-                <th>Created at</th>
-                <th>Participants</th>
+                <th class="hidden-col">Date</th>
+                <th class="hidden-col">Created at</th>
+                <th class="hidden-col">Participants</th>
                 <th>Total places</th>
                 <th>Still available</th>
             </tr>
@@ -34,14 +34,14 @@
             </tr>
         {% endif %}
 
-        {% for meetup in meetups %}
+        {% for meetup in meetUps %}
             <tr>
                 <td>{{ meetup.title }}</td>
-                <td>{{ meetup.date|date('d/m/Y') }}</td>
-                <td>{{ event.created_at|date('d/m/Y') }}</td>
-                <td><span class="badge">{{ participants }}</span></td>
+                <td class="hidden-col">{{ meetup.date|date('d/m/Y') }}</td>
+                <td class="hidden-col"{{ event.created_at|date('d/m/Y') }}</td>
+                <td class="hidden-col"><span class="badge">{{ meetup.subscriptionCount }}</span></td>
                 <td><span class="badge">{{ meetup.available_places }}</span></td>
-                <td><span class="badge alert-danger">{{ "#{ meetup.available_places - participants }" }}</span></td>
+                <td><span class="badge alert-danger">{{ "#{ meetup.available_places - meetup.subscriptionCount }" }}</span></td>
                 <td class="col-xs-2">
                     <div class="btn-group pull-right">
                         <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
@@ -49,6 +49,7 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
+                            <li><a href="{{ path_for('meetup.details', {'id' : meetup.id}) }}">Details Meetup</a></li>
                             <li><a href="{{ path_for('meetup.update', {'id' : meetup.id}) }}">Edit Meetup</a></li>
                             <li><a href="#" data-href="{{ path_for('meetup.delete', {'id' : meetup.id}) }}" data-toggle="modal" data-target="#confirm-delete">Delete</a></li>
                         </ul>

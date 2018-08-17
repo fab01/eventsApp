@@ -43,7 +43,8 @@ class Event extends Model
           ->get();
     }
 
-    public function isActive($id) {
+    public function isActive($id)
+    {
         $status = $this->find($id);
         if ($status->status == 1) {
             return true;

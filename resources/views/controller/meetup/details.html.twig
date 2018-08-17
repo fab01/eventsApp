@@ -1,0 +1,32 @@
+{% extends 'layout.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        {% if eventId is defined %}
+            <div class="col-md-12">
+                <a href="{{ path_for('meetup.all.eid', {'eid' : eventId}) }}" class="btn btn-md btn-info pull-right"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Back to the list</a>
+            </div>
+        {% endif %}
+        <div class="col-sm-6">
+            <h1>LIST OF PARTICIPANTS</h1>
+        </div>
+
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Surname Name</th>
+                <th>Subscribed on</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for subscriber in subscribers %}
+                <tr>
+                    <td>{{ subscriber.surname|lower|capitalize }} {{ subscriber.name|lower|capitalize }}</td>
+                    <td>{{ subscriber.created_at|date('d-m-Y') }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

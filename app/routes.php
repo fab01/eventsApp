@@ -35,12 +35,9 @@ $app->group('', function() use ($app, $container) {
     //ROUTES PER LE REGISTRAZIONI
     $app->get('/event/subscription', 'SubscriptionController:getEventSubscriptionCreate')->setName('event.subscription.create');
     $app->get('/event/subscription/{id}', 'SubscriptionController:getEventSubscriptionUpdate')->setName('event.subscription.update');
-    $app->get('/meetup/subscription', 'SubscriptionController:getMeetUpSubscriptionCreate')->setName('meetup.subscription.create');
-    $app->get('/meetup/subscription/{id}', 'SubscriptionController:getMeetUpSubscriptionUpdate')->setName('meetup.subscription.update');
+    $app->get('/meetup/subscription/{id}', 'SubscriptionController:getMeetUpSubscriptionCreate')->setName('meetup.subscription.create');
     $app->post('/event/subscription', 'SubscriptionController:postEventSubscriptionCreate');
     $app->post('/event/subscription/{id}', 'SubscriptionController:postEventSubscriptionUpdate');
-    $app->post('/meetup/subscription', 'SubscriptionController:postMeetUpSubscriptionCreate');
-    $app->post('/meetup/subscription/{id}', 'SubscriptionController:postMeetUpSubscriptionUpdate');
 
     /**
      * Routes accessible to to USER EDITOR AND MODERATOR.
@@ -48,16 +45,19 @@ $app->group('', function() use ($app, $container) {
     $app->group('', function() use($app, $container) {
 
         $app->get('/user/all', 'UserController:getAll')->setName('user.all'); // LIST OF USERS.
-        $app->get('/event/all', 'EventController:getAll')->setName('event.all'); // LIST OF EVENTS.
-        $app->get('/meetup/all', 'MeetUpController:getAll')->setName('meetup.all'); // LIST OF MEETUP.
-        $app->post('/meetup/all', 'MeetUpController:postAll'); // LIST OF MEETUP BY POST EVENT ID.
-        $app->get('/meetup/all/{eid}', 'MeetUpController:getAllByEid')->setName('meetup.all.eid'); // LIST OF MEETUP FILTERED BY Event ID in GET.
         $app->get('/accommodation/all', 'AccommodationController:getAll')->setName('accommodation.all'); // LIST OF ACCOMMODATION.
 
+        $app->get('/event/all', 'EventController:getAll')->setName('event.all'); // LIST OF EVENTS.
         $app->get('/event/details/{eid}', 'EventController:getEventDetails')->setName('event.details'); // DETAILS EVENTS.
         $app->get('/event/create', 'EventController:getEventCreate')->setName('event.create'); // CREATE EVENTS.
         $app->get('/event/update/{id}', 'EventController:getEventUpdate')->setName('event.update'); // UPDATE EVENTS.
+
         $app->get('/meetup/update/{id}', 'MeetUpController:getMeetUpUpdate')->setName('meetup.update'); // UPDATE MEETUP.
+        $app->get('/meetup/all', 'MeetUpController:getAll')->setName('meetup.all'); // LIST OF MEETUP.
+        $app->post('/meetup/all', 'MeetUpController:postAll'); // LIST OF MEETUP BY POST EVENT ID.
+        $app->get('/meetup/all/{eid}', 'MeetUpController:getAllByEid')->setName('meetup.all.eid'); // LIST OF MEETUP FILTERED BY Event ID in GET.
+        $app->get('/meetup/details/{id}', 'MeetUpController:getMeetUpDetails')->setName('meetup.details'); // DETAILS MEETUP.
+
         $app->get('/accommodation/create', 'AccommodationController:getAccommodationCreate')->setName('accommodation.create'); // CREATE ACCOMMODATION.
         $app->post('/accommodation/create', 'AccommodationController:postAccommodationCreate'); // CREATE ACCOMMODATION.
         $app->get('/accommodation/update/{id}', 'AccommodationController:getAccommodationUpdate')->setName('accommodation.update'); // UPDATE ACCOMMODATION.
@@ -71,7 +71,8 @@ $app->group('', function() use ($app, $container) {
          */
         $app->group('', function() use($app, $container) {
 
-            $app->get('/getEmailExcel', 'SubscriptionController:getEmailExcel')->setName('event.getEmailExcel'); // Download list of email Excel.
+            $app->get('/getZipOfAbstracts/{eid}', 'SubscriptionController:getZipOfAbstracts')->setName('event.getZipOfAbstracts'); // Download all Abstracts.
+            $app->get('/getEmailExcel/{eid}', 'SubscriptionController:getEmailExcel')->setName('event.getEmailExcel'); // Download list of email Excel.
             $app->post('/event/create', 'EventController:postEventCreate'); // CREATE EVENTS.
             $app->post('/event/update/{id}', 'EventController:postEventUpdate'); // UPDATE EVENTS.
             $app->get('/event/delete/{id}', 'EventController:getEventDelete')->setName('event.delete'); // DELETE EVENT.
@@ -81,7 +82,8 @@ $app->group('', function() use ($app, $container) {
             $app->get('/meetup/delete/{id}', 'MeetUpController:getMeetUpDelete')->setName('meetup.delete'); // DELETE MEETUP.
             $app->get('/event/details/update/{id}', 'EventController:getEventDetailsUpdate')->setName('event.details.update'); // UPDATE EVENTS DETAILS.
             $app->post('/event/details/update/{id}', 'EventController:postEventDetailsUpdate'); // UPDATE EVENTS DETAILS.
-            
+
+
         })->add(new AdminMiddleware($container));
 
     })->add(new RoleMiddleware($container, ['moderator', 'editor']));
