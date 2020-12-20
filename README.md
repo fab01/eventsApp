@@ -2,7 +2,7 @@
 <h3>Version 1.0</h3>
 This application is based on SLIM Micro Framework.
 <br />
-It allows to manage Events (meetups) with file upload system (doc & pdf), accomodation management (booking/reservations), sub-events (fore example round-tables) with a limited number of participants and subscriptions' deadlines. 
+It allows to manage Events (meetups) with file upload system (doc & pdf), accomodation management (booking/reservations), sub-events (Example round-tables) with a limited number of participants and subscriptions' deadlines. 
 <br />
 Download full Excel list of participants. 
 <br />
