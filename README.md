@@ -2,13 +2,15 @@
 <h3>Version 1.0</h3>
 This application is based on SLIM Micro Framework.
 <br />
-It allows to manage Events (Periodic meetups) with files' uploading system (example Abstracts and Documents word or pdf), setup accomodations for the night (more-than-one-day events) and related booking, sub-events (round-tables) with a given max number of participants and subscription's deadline. 
+It allows to manage Events (meetups) with file upload system (doc & pdf), accomodation management (booking/reservations), sub-events (round-tables) with limited number of participants and subscriptions' deadlines. 
 <br />
-Download list of participants in Excel format and Zip archive with all files uploaded by the users for each Event.
+Download full Excel list of participants. 
 <br />
-Users' notification system.
+Download full zip archive of files uploaded by participants for each Event.
 <br />
-Easily customisable authentication system. You can set your own users provider or use oAuth or whatever you want by altering app/Auth/Auth.php file, adding the method you prefer.
+Notification system.
+<br />
+Customisable authentication system. You can set your own users provider, oAuth protocol or whatever you want by editing app/Auth/Auth.php file and using the method that you prefer.
 <br />
 <br />
 <br />
