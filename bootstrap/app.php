@@ -20,10 +20,10 @@ $app = new \Slim\App([
             // Production
             /*
             'driver' => 'mysql',
-            'host' => '62.149.150.181',
-            'database' => 'Sql633077_4',
-            'username' => 'Sql633077',
-            'password' => '207d077a',
+            'host' => '',
+            'database' => '',
+            'username' => '',
+            'password' => '',
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
